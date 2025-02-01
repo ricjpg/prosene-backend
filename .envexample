@@ -1,0 +1,2 @@
+DATABASE_URL=postgresql://usuario:contraseña@localhost/nombre_bd
+SECRET_KEY=tu_clave_super_secreta
