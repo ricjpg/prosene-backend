@@ -1,2 +1,9 @@
-DATABASE_URL=postgresql://usuario:contraseña@localhost/nombre_bd
-SECRET_KEY=tu_clave_super_secreta
+DB_USER='usuario de la db'
+DB_PASSWORD='password de la db'
+DB_HOST='host de la db, usualmente localhost'
+DB_PORT='puerto de la db, usualmente 5432'
+DB_SERVER='nombre de la db'
+
+#JWT SETTINGS
+JWT_SECRET='secret key'
+JWT_ALGORITHM='algorithm'
