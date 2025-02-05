@@ -1,6 +1,7 @@
 from .base import BaseRepository
 from ..models.user import User
-from ..schemas.user import UserInCreate
+from ..schemas.user import UserInCreate, UserOutput, UserInUpdate
+
 
 class UserRepository(BaseRepository):
     def create_user(self, user_data : UserInCreate):
@@ -22,4 +23,3 @@ class UserRepository(BaseRepository):
     def get_user_by_id(self, user_id : int) -> User:
         user = self.session.query(User).filter_by(id=user_id).first()
         return user
-        

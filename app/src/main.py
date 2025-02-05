@@ -13,10 +13,3 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(router)
-# app = FastAPI()
-
-
-@app.get("/users/me")
-def read_protected(user: UserOutput = Depends(get_current_user)):
-    return {"data": user}
-

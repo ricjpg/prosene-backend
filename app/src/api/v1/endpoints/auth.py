@@ -15,6 +15,8 @@ def login(loginDetails: UserInLogin, session: Session = Depends(get_db)):
         raise error
 
 
+# Descripcion: Este endpoint se encarga de registrar un nuevo usuario, desactivado para produccion 
+
 @router.post("/signup", status_code=201, response_model=UserOutput)
 def signUp(signUpDetails : UserInCreate, session : Session = Depends(get_db)):
     try:
