@@ -10,6 +10,9 @@ class UserInCreate(BaseModel):
     password: str
     role_id: Union[int, None] = 3
 
+    class Config:
+        orm_mode = True
+
 class UserOutput(BaseModel):
     id: int
     first_name: str
@@ -17,17 +20,25 @@ class UserOutput(BaseModel):
     email: EmailStr
     role_id: int
 
+    class Config:
+        orm_mode = True
+
 class UserInUpdate(BaseModel):
-    id: int
     first_name: Union[str, None] = None
     last_name: Union[str, None] = None
     email: Union[EmailStr, None] = None
     password: Union[str, None] = None
     role_id: Union[int, None] = 3
 
+    class Config:
+        orm_mode = True
+
 class UserInLogin(BaseModel):
     email: EmailStr
     password: str
+
+    class Config:
+        orm_mode = True
 
 class UserWithToken(BaseModel):
     token: str

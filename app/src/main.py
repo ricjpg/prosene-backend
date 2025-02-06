@@ -13,3 +13,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(router)
+
+allow_origins=[
+    #frontend url
+    "http://localhost:5173"
+]
