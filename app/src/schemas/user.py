@@ -15,10 +15,10 @@ class UserInCreate(BaseModel):
 
 class UserOutput(BaseModel):
     id: int
-    first_name: str
-    last_name: str
-    email: EmailStr
-    role_id: int
+    first_name: Union[str, None] = None
+    last_name: Union[str, None] = None
+    email: Union[EmailStr, None] = None
+    role_id: Union[int, None] = None
 
     class Config:
         orm_mode = True
