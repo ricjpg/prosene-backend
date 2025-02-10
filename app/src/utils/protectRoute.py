@@ -33,7 +33,8 @@ def get_current_user(
                 first_name=user.first_name,
                 last_name=user.last_name,
                 email=user.email,
-                role_id=user.role_id
+                role_id=user.role_id,
+                isActive=user.isActive
             )
         except Exception as error:
             raise error

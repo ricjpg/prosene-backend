@@ -22,6 +22,8 @@ class UserService:
     def login(self, login_details : UserInLogin) -> UserWithToken:
         if not self.__userRepository.user_exist_by_email(email=login_details.email):
             raise HTTPException(status_code=400, detail="Please create an Account")
+        if not self.__userRepository.get_user_by_email(email=login_details.email).isActive==True:
+            raise HTTPException(status_code=400, detail="Account deactivate, please contact the administrator")
         
         user = self.__userRepository.get_user_by_email(email=login_details.email)
         if HashHelper.verify_password(plain_password=login_details.password, hashed_password=user.password):

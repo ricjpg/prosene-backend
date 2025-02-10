@@ -20,14 +20,14 @@ async def create_user(signUpDetails : UserInCreate, session : Session = Depends(
     raise HTTPException(status_code=403, detail="Unauthorized, please contact the admin")
 
 @router.get("/all", response_model=list[UserOutput], summary="Get all users")
-async def get_all_users(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)):
-    if user.role_id == 1 or user.role_id == 2:
+async def get_all_users(session : Session = Depends(get_db)):
+    # if user.role_id == 1 or user.role_id == 2:
         try:
             return UserService(session=session).get_all_users()
         except Exception as error:
             print(error)
             raise error
-    raise HTTPException(status_code=403, detail="Unauthorized, please contact the admin")
+    # raise HTTPException(status_code=403, detail="Unauthorized, please contact the admin")
 
 @router.get("/get/{user_id}", status_code=200, response_model=UserOutput, summary="Get user by id")
 async def get_user_by_id(user_id : int, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)):

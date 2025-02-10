@@ -35,7 +35,8 @@ class UserRepository(BaseRepository):
     
     def get_all_users(self) ->list:
         try:
-            return self.session.query(User).all()
+            users = self.session.query(User).all()
+            return users
         except Exception as error:
             raise error
         

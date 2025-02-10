@@ -12,5 +12,6 @@ class User(Base):
     email = Column(String(100), unique=True)
     password = Column(String(250))
     role_id = Column(Integer, ForeignKey('roles.id'))
+    isActive = Column()
 
     role = relationship("Role")
