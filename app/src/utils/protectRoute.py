@@ -29,12 +29,10 @@ def get_current_user(
         try:
             user = UserService(session=session).get_user_by_id(payload["user_id"])
             return UserOutput(
-                id = user.id,
-                first_name=user.first_name,
-                last_name=user.last_name,
+                idusuario = user.idusuario,
                 email=user.email,
                 role_id=user.role_id,
-                isActive=user.isActive
+                isactive=user.isactive
             )
         except Exception as error:
             raise error

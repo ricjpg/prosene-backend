@@ -1,6 +1,7 @@
 from .base import BaseRepository
 from ..models.user import User
 from ..schemas.user import UserInCreate, UserOutput, UserInUpdate
+from fastapi import HTTPException
 
 
 class UserRepository(BaseRepository):
@@ -20,22 +21,22 @@ class UserRepository(BaseRepository):
         user = self.session.query(User).filter_by(email=email).first()
         return user
     
-    def get_user_by_id(self, user_id : int) -> User:
-        user = self.session.query(User).filter_by(id=user_id).first()
+    def get_user_by_id(self, user_id : int) -> UserOutput:
+        user = self.session.query(User).filter_by(idusuario=user_id).first()
         return user
     
     
     def delete_user(self, email : str) -> str:
         user = self.get_user_by_email(email)
-        if user:
-            self.session.delete(user)
+        if user and user.isactive==True:
+            user.isactive = False
             self.session.commit()
-            return "User" + user.email + " Deleted"
-        raise Exception("User not found")
+            return "User: " + user.email + " Deleted"
+        return "User not found"
     
-    def get_all_users(self) ->list:
+    def get_all_users(self) ->list[UserOutput]:
         try:
-            users = self.session.query(User).all()
+            users = self.session.query(User).filter(User.isactive==True).all()
             return users
         except Exception as error:
             raise error
@@ -43,8 +44,6 @@ class UserRepository(BaseRepository):
     def update_user(self, email : str, user_data : UserInUpdate) -> UserOutput:
         user = self.get_user_by_email(email)
         if user:
-            user.first_name = user_data.first_name
-            user.last_name = user_data.last_name
             user.email = user_data.email
             user.password = user_data.password
             user.role_id = user_data.role_id

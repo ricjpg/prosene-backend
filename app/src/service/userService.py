@@ -22,12 +22,12 @@ class UserService:
     def login(self, login_details : UserInLogin) -> UserWithToken:
         if not self.__userRepository.user_exist_by_email(email=login_details.email):
             raise HTTPException(status_code=400, detail="Please create an Account")
-        if not self.__userRepository.get_user_by_email(email=login_details.email).isActive==True:
+        if not self.__userRepository.get_user_by_email(email=login_details.email).isactive==True:
             raise HTTPException(status_code=400, detail="Account deactivate, please contact the administrator")
         
         user = self.__userRepository.get_user_by_email(email=login_details.email)
         if HashHelper.verify_password(plain_password=login_details.password, hashed_password=user.password):
-            token = AuthHandler.sign_jwt(user_id=user.id, role_id=user.role_id)
+            token = AuthHandler.sign_jwt(user_id=user.idusuario, role_id=user.role_id)
             if token:
                 return UserWithToken(token=token)
             raise HTTPException(status_code=500, detail="Unable to process request")
@@ -45,7 +45,7 @@ class UserService:
         raise HTTPException(status_code=404, detail="User not found")
     
     def get_user_by_id(self, user_id : int) -> UserOutput:
-        user = self.__userRepository.get_user_by_id(user_id=user_id)
+        user = self.__userRepository.get_user_by_id(user_id)
         if user:
             return user
         raise HTTPException(status_code=404, detail="User not found")

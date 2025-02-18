@@ -2,14 +2,14 @@ from pydantic import EmailStr, BaseModel
 from typing import Optional, Union
 
 
-class RolInCreate(BaseModel):
+class CentroRegionalCreate(BaseModel):
     idcentroregional: int
     centroregional: str
     class Config:
         orm_mode = True
     
 
-class RolOutput(BaseModel):
+class CentroRegionalOutput(BaseModel):
     idcentroregional: int
     centroregional: str
     class Config:
