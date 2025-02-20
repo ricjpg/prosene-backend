@@ -7,16 +7,16 @@ from .formulario import Formulario
 
 class Discapacidad(Base):
     __tablename__ = "discapacidad"
-    idDiscapacidad = Column(Integer, primary_key=True, index=True)
-    idFormulario = Column(Integer, ForeignKey("formulario.idFormulario"))
-    dificultadParaLeer = Column(Enum(Escala))
-    dificultadParaEscribir = Column(Enum(Escala))
-    dificultadPararEntenderYSeguirOrdenes = Column(Enum(Escala))
-    dificultadParaMantenerAtencion = Column(Enum(Escala))
-    dificultadParaMemorizarInformacion = Column(Enum(Escala))
-    dificultadParaConversaciones = Column(Enum(Escala))
-    dificultadParaRelacionarseConOtros = Column(Enum(Escala))
-    dificultadParaMatematicas = Column(Enum(Escala))
-    dificultadParaVidaDiaria = Column(Enum(Escala))
+    iddiscapacidad = Column(Integer, primary_key=True, index=True)
+    idformulario = Column(Integer, ForeignKey("formulario.idformulario"))
+    dificultadparaleer = Column(Enum(Escala))
+    dificultadparaescribir = Column(Enum(Escala))
+    dificultadparaentenderyseguirordenes = Column(Enum(Escala))
+    dificultadparamanteneratencion = Column(Enum(Escala))
+    dificultadparamemorizarinformacion = Column(Enum(Escala))
+    dificultadparaconversaciones = Column(Enum(Escala))
+    dificultadpararelacionarseconotros = Column(Enum(Escala))
+    dificultadparamatematicas = Column(Enum(Escala))
+    dificultadparavidadiaria = Column(Enum(Escala))
 
     formulario = relationship("Formulario")

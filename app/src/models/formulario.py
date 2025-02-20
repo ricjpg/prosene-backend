@@ -1,33 +1,43 @@
 from datetime import date
-import datetime
+import datetime, enum
 from ..database.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, Enum
 from sqlalchemy.orm import relationship, mapped_column, Mapped
+from .user import User
 from .nacionalidades import Nacionalidades
 from .condicionMedica import CondicionMedica
 
 
+class EstadoCivil(enum.Enum):
+    soltero = "soltero"
+    casado = "casado"
+    viudo = "viudo"
+    divorciado = "divorciado"
+
+
 class Formulario(Base):
     __tablename__ = "formulario"
-    idFormulario = Column(Integer, primary_key=True, index=True)
-    idCondicionMedica = Column(Integer, ForeignKey("condicionMedica.idCondicionMedica"))
-    nacionalidad = Column(Integer, ForeignKey("nacionalidades.idnacionalidad"))
-    estadoCivil = Column(String(50))
-    lugarDeProcedencia = Column(String(50))
-    direccionActual = Column(String(50))
-    perteneceAAsociacion = Column(bool)
-    nombreAsociacion = Column(String(50))
-    rolEnLaAsociacion = Column(String(50))
-    tieneTrabajo = Column(bool)
-    lugarTrabajo = Column(String(50))
-    puestoTrabajo = Column(String(50))
-    direccionTrabajo = Column(String(50))
-    telefonoTrabajo = Column(String(50))
-    ingresoMensual = Column(Integer)
-    constitucionNucleoFamiliar = Column(String(50))
-    ocupacionDePadresEnHogar = Column(String(50))
-    nivelEducativoPadres = Column(String(50))
-    ingresoMensualFamiliar = Column(Integer)
+    idformulario = Column(Integer, primary_key=True, index=True)
+    idusuario = Column(Integer, ForeignKey('usuario.idusuario'))
+    idcondicionmedica = Column(Integer, ForeignKey("condicionmedica.idcondicionmedica"))
+    idnacionalidad = Column(Integer, ForeignKey("nacionalidades.idnacionalidad"))
+    estadocivil = Column(Enum(EstadoCivil))
+    lugardeprocedencia = Column(String(200))
+    direccionactual = Column(String(200))
+    perteneceaasociacion = Column(Boolean)
+    nombreasociacion = Column(String(100))
+    rolenlaasociacion = Column(String(100))
+    tienetrabajo = Column(Boolean)
+    lugartrabajo = Column(String(150))
+    puestotrabajo = Column(String(100))
+    direcciontrabajo = Column(String(200))
+    telefonotrabajo = Column(String(50))
+    ingresomensual = Column(Integer)
+    constitucionnucleofamiliar = Column(String(50))
+    ocupaciondepadresenhogar = Column(String(100))
+    niveleducativopadres = Column(String(100))
+    ingresomensualfamiliar = Column(Integer)
 
+    usuario = relationship("User", uselist=False)
     condicionmedica = relationship("CondicionMedica")
     nacionalidades = relationship("Nacionalidades")

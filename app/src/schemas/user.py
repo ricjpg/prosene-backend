@@ -30,8 +30,6 @@ class UserOutput(BaseModel):
         orm_mode = True
 
 class UserInUpdate(BaseModel):
-    first_name: Union[str, None] = None
-    last_name: Union[str, None] = None
     email: Union[EmailStr, None] = None
     password: Union[str, None] = None
     role_id: Union[int, None] = 3
@@ -50,7 +48,9 @@ class UserInLogin(BaseModel):
 
 class UserWithToken(BaseModel):
     token: str
+    idusuario: Optional[int] = None
+    role_id: Optional[int] = None
+    isActive: Union[bool, None] = True
 
 class UserOutputMinimal(BaseModel):
     email: Optional[EmailStr] = None
-    

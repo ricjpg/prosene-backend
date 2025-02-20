@@ -1,7 +1,7 @@
 from datetime import date
 import datetime
 from ..database.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Date
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 
 
@@ -14,9 +14,9 @@ class Persona(Base):
     segundonombre = Column(String(50))
     primerapellido = Column(String(50))
     segundoapellido = Column(String(50))
-    direccion = Column(String(150))
+    direccion = Column(String(200))
     telefono = Column(String(50))
-    fechanacimiento = Column()
+    fechanacimiento = Column(Date)
     sexo = Column(String(20))
     
     

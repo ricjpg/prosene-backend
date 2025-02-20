@@ -9,6 +9,9 @@ from ....service.personaService import PersonaService
 from ....schemas.persona import PersonaCreate, PersonaOutput
 from ....service.solicitudService import SolicitudService
 from ....schemas.solicitudes import SolicitudesCreate, SolicitudesOutput
+from ....schemas.formulario import FormularioCreate, FormularioOutput
+from ....service.formularioService import FormularioService
+
 
 router = APIRouter(tags=["users"])
 
@@ -83,11 +86,19 @@ async def add_details(persona_input : PersonaCreate, session : Session = Depends
         raise error
 
 
-@router.post("/solicitud", status_code=200, summary="Crear nueva solicitud")
-async def create_solicitud(solicitud_input : SolicitudesCreate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
+# @router.post("/solicitud", status_code=200, summary="Crear nueva solicitud")
+# async def create_solicitud(solicitud_input : SolicitudesCreate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
+#     try:
+#         solicitud_input.idusuariosolicitante = user.idusuario
+#         return SolicitudService(session=session).create_solicitud(solicitud_details=solicitud_input)
+#     except Exception as error:
+#         print(error)
+#         raise error
+
+@router.get("/formulario/{id}", status_code=200, summary="Obtener formulario completo")
+async def get_full_form(id : int, session : Session = Depends(get_db)):
     try:
-        solicitud_input.idusuariosolicitante = user.idusuario
-        return SolicitudService(session=session).create_solicitud(solicitud_details=solicitud_input)
+        return FormularioService(session=session).get_form_by_user_id(user_id=id)
     except Exception as error:
         print(error)
         raise error

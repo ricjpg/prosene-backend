@@ -6,7 +6,7 @@ from .persona import Persona
 class CondicionMedica(Base):
     __tablename__ = "condicionmedica"
     idcondicionmedica = Column(Integer, primary_key = True)
-    condicionmedica = Column(String(50), unique=True, nullable=False)
+    condicionmedica = Column(String(200), unique=True, nullable=False)
 
 
     class Config:

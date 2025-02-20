@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 class EstadoSolicitud(Base):
     __tablename__ = "estadosolicitud"
     idestadosolicitud = Column(Integer, primary_key = True)
-    descripcion = Column(String(50), unique=True, nullable=False)
+    descripcion = Column(String(200), unique=True, nullable=False)
 
     
     class Config:

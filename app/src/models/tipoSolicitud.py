@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 class TipoSolicitud(Base):
     __tablename__ = "tiposolicitud"
     idtiposolicitud = Column('idtiposolicitud',Integer, primary_key = True)
-    descripcion = Column('descripcion',String(50), unique=True, nullable=False)
+    descripcion = Column('descripcion',String(100), unique=True, nullable=False)
 
     # solicitudes = relationship("Solicitudes")
     class Config:
