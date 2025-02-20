@@ -15,46 +15,46 @@ class FormularioService:
 
 
     def create_formulario(self, formulario_data: FormularioCreate)->FormularioOutput:
-        form = self.__formularioRepository.get_form_by_id(formulario_data.idformulario)
+        form = self.__formularioRepository.get_form_by_id(formulario_data.idusuario)
         if not form:
             return self.__formularioRepository.create_formulario(formulario_data)
         raise HTTPException(status_code=208, detail="Este formulario ya existe")
     
     def create_caracteristicas(self, caracteristicas_data: CaracteristicasEducativasCreate)->CaracteristicasEducativasOutput:
-        form = self.__formularioRepository.get_form_by_id(caracteristicas_data.idformulario)
-        if not form:
+        # form = self.__formularioRepository.get_form_by_id(caracteristicas_data.idformulario)
+        # if not form:
             return self.__formularioRepository.create_caracteristicas_educativas(caracteristicas_data)
-        raise HTTPException(status_code=208, detail="Este formulario ya existe")
+        # raise HTTPException(status_code=208, detail="Este formulario ya existe")
     
     def create_comunicacion(self, comunicacion_data: ComunicacionCreate)->ComunicacionOutput:
-        form = self.__formularioRepository.get_form_by_id(comunicacion_data.idformulario)
-        if not form:
+        # form = self.__formularioRepository.get_form_by_id(comunicacion_data.idformulario)
+        # if not form:
             return self.__formularioRepository.create_comunicacion(comunicacion_data)
-        raise HTTPException(status_code=208, detail="Este formulario ya existe")
+        # raise HTTPException(status_code=208, detail="Este formulario ya existe")
     
     def create_deficiencia(self, deficiencia_data: DeficienciaCreate)->DeficienciaOutput:
-        form = self.__formularioRepository.get_form_by_id(deficiencia_data.idformulario)
-        if not form:
+        # form = self.__formularioRepository.get_form_by_id(deficiencia_data.idformulario)
+        # if not form:
             return self.__formularioRepository.create_deficiencia(deficiencia_data)
-        raise HTTPException(status_code=208, detail="Este formulario ya existe")
+        # raise HTTPException(status_code=208, detail="Este formulario ya existe")
     
     def create_discapacidad(self, discapacidad_data: DiscapacidadCreate)->DiscapacidadOutput:
-        form = self.__formularioRepository.get_form_by_id(discapacidad_data.idformulario)
-        if not form:
+        # form = self.__formularioRepository.get_form_by_id(discapacidad_data.idformulario)
+        # if not form:
             return self.__formularioRepository.create_discapacidad(discapacidad_data)
-        raise HTTPException(status_code=208, detail="Este formulario ya existe")
+        # raise HTTPException(status_code=208, detail="Este formulario ya existe")
     
     def create_movilizacion(self, movilizacion_data: MovilizacionCreate)->MovilizacionOutput:
-        form = self.__formularioRepository.get_form_by_id(movilizacion_data.idformulario)
-        if not form:
+        # form = self.__formularioRepository.get_form_by_id(movilizacion_data.idformulario)
+        # if not form:
             return self.__formularioRepository.create_movilizacion(movilizacion_data)
-        raise HTTPException(status_code=208, detail="Este formulario ya existe")
+        # raise HTTPException(status_code=208, detail="Este formulario ya existe")
     
     def create_servicios(self, servicios_data: MovilizacionCreate)->MovilizacionOutput:
-        form = self.__formularioRepository.get_form_by_id(servicios_data.idformulario)
-        if not form:
+        # form = self.__formularioRepository.get_form_by_id(servicios_data.idformulario)
+        # if not form:
             return self.__formularioRepository.create_servicios(servicios_data)
-        raise HTTPException(status_code=208, detail="Este formulario ya existe")
+        # raise HTTPException(status_code=208, detail="Este formulario ya existe")
     
     def get_full_form_by_id(self, form_id: int):
         full_form = self.__formularioRepository.get_full_form_by_id(form_id)
