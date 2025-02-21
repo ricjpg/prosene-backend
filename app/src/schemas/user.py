@@ -34,7 +34,7 @@ class UserInUpdate(BaseModel):
     password: Union[str, None] = None
     role_id: Union[int, None] = 3
     isActive: Union[bool, None] = True
-    
+    idcentroregional: Optional[int] = 1
 
     class Config:
         orm_mode = True

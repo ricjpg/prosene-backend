@@ -47,6 +47,7 @@ class UserRepository(BaseRepository):
             user.email = user_data.email
             user.password = user_data.password
             user.role_id = user_data.role_id
+            user.idcentroregional = user_data.idcentroregional
             self.session.commit()
             self.session.refresh(instance=user)
             return user
