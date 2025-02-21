@@ -8,8 +8,7 @@ from .user import UserOutput
 
 
 class SolicitudesCreate(BaseModel):
-    idsolicitud: Optional[int]
-    idusuariosolicitante: int
+    idusuariosolicitante: Optional[int]
     idresponsablesolicitud: Optional[int]
     idtiposolicitud: int
     idestadosolicitud: Optional[int] = 1
