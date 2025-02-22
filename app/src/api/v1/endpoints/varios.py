@@ -13,6 +13,8 @@ from ....schemas.nacionalidades import NacionalidadOutput
 from ....service.nacionalidadesService import NacionalidadesService
 from ....schemas.estadoSolicitud import EstadoSolicitudOutput
 from ....service.estadoSolicitudService import EstadoSolicitudService
+from ....schemas.tipoSolicitud import TipoSolicitudOutput
+from ....service.tiposSolicitudService import TipoSolicitudService
 
 
 router = APIRouter(tags=["varios"])
@@ -56,3 +58,12 @@ async def get_all(session : Session = Depends(get_db)) -> list[EstadoSolicitudOu
     except Exception as error:
         print(error)
         raise error
+
+@router.get("/tipos", status_code=200, summary="Lista de tipos de solicitud")
+async def get_all(session : Session = Depends(get_db)) -> list[TipoSolicitudOutput]:
+    try:
+        return TipoSolicitudService(session=session).get_all()
+    except Exception as error:
+        print(error)
+        raise error
+
