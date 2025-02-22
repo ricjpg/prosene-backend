@@ -7,6 +7,8 @@ from ....service.rolesService import RolesService
 from ....schemas.roles import RolesOutput
 from ....service.centroRegionalService import CentroRegionalService
 from ....schemas.centroRegional import CentroRegionalOutput
+from ....schemas.condicionMedica import CondicionMedicaOutput
+from ....service.condicionMedicaService import CondicionMedicaService
 
 
 router = APIRouter(tags=["varios"])
@@ -26,4 +28,13 @@ async def get_all(session : Session = Depends(get_db)) -> list[CentroRegionalOut
     except Exception as error:
         print(error)
         raise error
+    
+@router.get("/condiciones", status_code=200, summary="condiciones medicas")
+async def get_all(session : Session = Depends(get_db)) -> list[CondicionMedicaOutput]:
+    try:
+        return CondicionMedicaService(session=session).get_all()
+    except Exception as error:
+        print(error)
+        raise error
+    
     
