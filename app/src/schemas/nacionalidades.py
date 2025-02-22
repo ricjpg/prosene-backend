@@ -10,7 +10,7 @@ class NacionalidadCreate(BaseModel):
     
 
 class NacionalidadOutput(BaseModel):
-    idnacinoalidad: Optional[int]
+    idnacionalidad: Optional[int]
     nacionalidad: Optional[str]
     class Config:
         orm_mode = True

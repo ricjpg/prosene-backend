@@ -9,11 +9,13 @@ from ....service.centroRegionalService import CentroRegionalService
 from ....schemas.centroRegional import CentroRegionalOutput
 from ....schemas.condicionMedica import CondicionMedicaOutput
 from ....service.condicionMedicaService import CondicionMedicaService
+from ....schemas.nacionalidades import NacionalidadOutput
+from ....service.nacionalidadesService import NacionalidadesService
 
 
 router = APIRouter(tags=["varios"])
 
-@router.get("/roles", status_code=200, summary="roles disponibles")
+@router.get("/roles", status_code=200, summary="Lista de roles disponibles")
 async def get_all(session : Session = Depends(get_db)) -> list[RolesOutput]:
     try:
         return RolesService(session=session).get_all()
@@ -21,7 +23,7 @@ async def get_all(session : Session = Depends(get_db)) -> list[RolesOutput]:
         print(error)
         raise error
     
-@router.get("/centros", status_code=200, summary="centros regionales")
+@router.get("/centros", status_code=200, summary="Lista de centros regionales")
 async def get_all(session : Session = Depends(get_db)) -> list[CentroRegionalOutput]:
     try:
         return CentroRegionalService(session=session).get_all()
@@ -29,12 +31,18 @@ async def get_all(session : Session = Depends(get_db)) -> list[CentroRegionalOut
         print(error)
         raise error
     
-@router.get("/condiciones", status_code=200, summary="condiciones medicas")
+@router.get("/condiciones", status_code=200, summary="Lista de condiciones medicas")
 async def get_all(session : Session = Depends(get_db)) -> list[CondicionMedicaOutput]:
     try:
         return CondicionMedicaService(session=session).get_all()
     except Exception as error:
         print(error)
         raise error
-    
-    
+        
+@router.get("/nacionalidades", status_code=200, summary="Lista de nacionalidades")
+async def get_all(session : Session = Depends(get_db)) -> list[NacionalidadOutput]:
+    try:
+        return NacionalidadesService(session=session).get_all()
+    except Exception as error:
+        print(error)
+        raise error
