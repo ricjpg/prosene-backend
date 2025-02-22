@@ -22,6 +22,7 @@ class DiscapacidadCreate(BaseModel):
         orm_mode = True
 
 class DiscapacidadOutput(BaseModel):
+    iddiscapacidad: Optional[int]
     idformulario: Optional[int]
     dificultadparaleer: Optional[Escala]
     dificultadparaescribir: Optional[Escala]

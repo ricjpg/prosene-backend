@@ -19,6 +19,7 @@ class CaracteristicasEducativasCreate(BaseModel):
         orm_mode = True
 
 class CaracteristicasEducativasOutput(BaseModel):
+    idcaracteristicas: Optional[int]
     idformulario: Optional[int]
     titulonivelmedio: Optional[str]
     institutoeducativo: Optional[str]

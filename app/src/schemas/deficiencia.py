@@ -16,6 +16,7 @@ class DeficienciaCreate(BaseModel):
         orm_mode = True
 
 class DeficienciaOutput(BaseModel):
+    iddeficiencia: Optional[int]
     idformulario: Optional[int]
     hipoacusia: Optional[str]
     sordera: Optional[str]

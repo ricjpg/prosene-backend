@@ -54,3 +54,11 @@ class UserWithToken(BaseModel):
 
 class UserOutputMinimal(BaseModel):
     email: Optional[EmailStr] = None
+
+
+class ResetPassword(BaseException):
+    email: Optional[str]
+    password: Optional[str]
+
+    class Config:
+        orm_mode = True

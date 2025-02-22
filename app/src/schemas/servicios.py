@@ -27,6 +27,7 @@ class ServiciosCreate(BaseModel):
         orm_mode = True
 
 class ServiciosOutput(BaseModel):
+    idservicio: Optional[int]
     idformulario: Optional[int]
     apoyoenprocesodeadmision: Optional[bool]
     apoyoenpaa: Optional[bool]

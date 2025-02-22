@@ -1,5 +1,5 @@
 from ..repository.userRepository import UserRepository
-from ..schemas.user import UserInLogin, UserOutput, UserWithToken, UserInCreate, UserInUpdate
+from ..schemas.user import UserInLogin, UserOutput, UserWithToken, UserInCreate, UserInUpdate, ResetPassword
 from ..core.security.hashHelper import HashHelper
 from ..core.security.authHandler import AuthHandler
 from sqlalchemy.orm import Session
@@ -65,3 +65,13 @@ class UserService:
             print(hashed_password)
             return user
         raise HTTPException(status_code=404, detail="User not found")
+    
+    def reset_password(self, user_data : UserInUpdate) -> str:
+        user = self.get_user_by_email(user_data.email)
+        if user:
+            hashed_password = HashHelper.get_password_hash(plain_password=user_data.password)
+            user_data.password = hashed_password
+            user = self.__userRepository.reset_password(user_data=user_data)
+            print(hashed_password)
+            return "Se ha cambiado la contraseña"
+        return HTTPException(status_code=404, detail="user not found")

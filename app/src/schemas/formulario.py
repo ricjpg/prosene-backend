@@ -39,6 +39,7 @@ class FormularioCreate(BaseModel):
 
 
 class FormularioOutput(BaseModel):
+    idformulario: Optional[int]
     idusuario: Optional[int]
     idcondicionmedica: Optional[int]
     idnacionalidad: Optional[int]

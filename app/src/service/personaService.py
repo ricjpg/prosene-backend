@@ -13,4 +13,5 @@ class PersonaService:
         #     raise HTTPException(status_code=404, detail="Numero de identidad utilizado")
         return self.__personaRepositoy.create_persona(persona_details)
     
-
+    def get_by_user_id(self, user_id:int) -> PersonaOutput:
+        self.__personaRepositoy.get_persona_by_user_id(user_id)

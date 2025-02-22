@@ -18,6 +18,7 @@ class ComunicacionCreate(BaseModel):
         orm_mode = True
 
 class ComunicacionOutput(BaseModel):
+    idcomunicacion: Optional[int]
     idformulario: Optional[int]
     usabraille: Optional[bool]
     usalsho: Optional[bool]

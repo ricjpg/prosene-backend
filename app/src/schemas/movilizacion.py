@@ -19,6 +19,7 @@ class MovilizacionCreate(BaseModel):
         orm_mode = True
 
 class MovilizacionOutput(BaseModel):
+    idmovilizacion: Optional[int]
     idformulario: Optional[int]
     dificultadparaorientarseenentorno: Optional[Escala]
     dificultadparasalvardesniveles: Optional[Escala]

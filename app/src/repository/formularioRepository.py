@@ -8,6 +8,8 @@ from ..models.deficiencia import Deficiencia
 from ..models.discapacidad import Discapacidad
 from ..models.movilizacion import Movilizacion
 from ..models.servicios import Servicios
+from ..models.persona import Persona
+from ..models.user import User
 from .userRepository import UserRepository
 from ..schemas.formulario import FormularioCreate, FormularioOutput, FormularioFull
 from ..schemas.caracteristicasEducativas import CaracteristicasEducativasCreate, CaracteristicasEducativasOutput
@@ -16,6 +18,8 @@ from ..schemas.deficiencia import DeficienciaCreate, DeficienciaOutput
 from ..schemas.discapacidad import DiscapacidadCreate, DiscapacidadOutput
 from ..schemas.movilizacion import MovilizacionCreate, MovilizacionOutput
 from ..schemas.servicios import ServiciosCreate, ServiciosOutput
+from ..schemas.persona import PersonaOutput
+from ..schemas.user import UserOutput
 
 
 class FormularioRepository(BaseRepository):
@@ -106,11 +110,15 @@ class FormularioRepository(BaseRepository):
         formulario = self.session.query(Formulario).filter(Formulario.idformulario==form_id).first()
         caracteristicas = self.session.query(CaracteristicasEducativas).filter(CaracteristicasEducativas.idformulario==form_id).first()
         comunicacion = self.session.query(Comunicacion).filter(Comunicacion.idformulario==form_id).first()
-        deficiencia = formulario = self.session.query(Deficiencia).filter(Deficiencia.idformulario==form_id).first()
-        discapacidad = formulario = self.session.query(Discapacidad).filter(Discapacidad.idformulario==form_id).first()
-        movilizacion = formulario = self.session.query(Movilizacion).filter(Movilizacion.idformulario==form_id).first()
-        servicios = formulario = self.session.query(Servicios).filter(Servicios.idformulario==form_id).first()
+        deficiencia = self.session.query(Deficiencia).filter(Deficiencia.idformulario==form_id).first()
+        discapacidad = self.session.query(Discapacidad).filter(Discapacidad.idformulario==form_id).first()
+        movilizacion = self.session.query(Movilizacion).filter(Movilizacion.idformulario==form_id).first()
+        servicios = self.session.query(Servicios).filter(Servicios.idformulario==form_id).first()
+        persona = self.session.query(Persona).filter(Persona.idusuario==formulario.idusuario).first()
+        usuario = self.session.query(User).filter(User.idusuario == formulario.idusuario).first()
         return {
+            "usuario": usuario,
+            "detalles personales": persona,
             "formulario": formulario,
             "caracteristicas": caracteristicas,
             "comunicacion": comunicacion,

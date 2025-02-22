@@ -77,7 +77,7 @@ async def create_servicios(servicio_input : ServiciosCreate, session : Session =
 @router.get("/full/{id}", status_code=200, summary="Obtener formulario completo")
 async def get_full_form(id : int, session : Session = Depends(get_db)):
     try:
-        return FormularioService(session=session).get_full_form(form_id=id)
+        return FormularioService(session=session).get_full_form_by_id(form_id=id)
     except Exception as error:
         print(error)
         raise error

@@ -1,6 +1,6 @@
 from .base import BaseRepository
 from ..models.user import User
-from ..schemas.user import UserInCreate, UserOutput, UserInUpdate
+from ..schemas.user import UserInCreate, UserOutput, UserInUpdate, ResetPassword
 from fastapi import HTTPException
 
 
@@ -52,3 +52,12 @@ class UserRepository(BaseRepository):
             self.session.refresh(instance=user)
             return user
         raise Exception("User not found")
+
+    def reset_password(self, user_data: UserInUpdate) -> str:
+        user = self.get_user_by_email(user_data.email)
+        if user:
+            user.password = user_data.password
+            self.session.commit()
+            self.session.refresh(instance=user)
+            return "Se ha cambiado tu contraseña"
+        return HTTPException(status_code=404, detail="Usuario no encontrado")

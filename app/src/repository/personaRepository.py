@@ -16,8 +16,8 @@ class PersonaRepository(BaseRepository):
         persona = self.session.query(Persona).filter_by(numeroidentidad=dni).first()
         return persona
     
-    def get_persona_by_id(self, user_id : int) -> Persona:
-        persona = self.session.query(Persona).filter_by(idpersona=user_id).first()
+    def get_persona_by_user_id(self, user_id : int) -> Persona:
+        persona = self.session.query(Persona).filter(Persona.idusuario==user_id).first()
         return persona
     
     

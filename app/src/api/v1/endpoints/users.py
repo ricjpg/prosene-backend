@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import FastAPI, Depends, APIRouter, Header, HTTPException, status
-from ....schemas.user import UserInCreate, UserInLogin, UserWithToken, UserOutput, UserInUpdate
+from ....schemas.user import UserInCreate, UserInLogin, UserWithToken, UserOutput, UserInUpdate, ResetPassword
 from ....database.database import get_db
 from sqlalchemy.orm import Session
 from ....service.userService import UserService
@@ -85,20 +85,18 @@ async def add_details(persona_input : PersonaCreate, session : Session = Depends
         print(error)
         raise error
 
-
-# @router.post("/solicitud", status_code=200, summary="Crear nueva solicitud")
-# async def create_solicitud(solicitud_input : SolicitudesCreate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
-#     try:
-#         solicitud_input.idusuariosolicitante = user.idusuario
-#         return SolicitudService(session=session).create_solicitud(solicitud_details=solicitud_input)
-#     except Exception as error:
-#         print(error)
-#         raise error
-
 @router.get("/formulario/{id}", status_code=200, summary="Obtener formulario completo")
 async def get_full_form(id : int, session : Session = Depends(get_db)):
     try:
         return FormularioService(session=session).get_form_by_user_id(user_id=id)
+    except Exception as error:
+        print(error)
+        raise error
+
+@router.post("/resetpassword", status_code=200, summary="reset password")
+async def reset_password(data_input : UserInUpdate, session : Session = Depends(get_db)):
+    try:
+        return UserService(session=session).reset_password(user_data=data_input)
     except Exception as error:
         print(error)
         raise error
