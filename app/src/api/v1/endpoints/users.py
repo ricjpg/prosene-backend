@@ -12,12 +12,14 @@ from ....schemas.solicitudes import SolicitudesCreate, SolicitudesOutput
 from ....schemas.formulario import FormularioCreate, FormularioOutput
 from ....service.formularioService import FormularioService
 from ....schemas.email import EmailSchema
-import smtplib
+import smtplib, os
 from email.message import EmailMessage
 from starlette.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-
+from dotenv import load_dotenv
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+
+load_dotenv()
 
 router = APIRouter(tags=["users"])
 
@@ -118,14 +120,14 @@ async def reset_password(mail_data : EmailSchema, session : Session=Depends(get_
         user = UserService(session=session).get_user_by_email(mail_data.emailAddress)
         persona = PersonaService(session=session).get_by_user_id(user.idusuario)
         user_token =  UserService(session=session).generete_token(mail_data.emailAddress)
-        email_address = "ricardoguardiolahn@gmail.com" # type Email
-        email_password = "nhbhlrxmhkmdlymd" # If you do not have a gmail apps password, create a new app with using generate password. Check your apps and passwords https://myaccount.google.com/apppasswords
-
+        email_address = os.getenv('email_address')
+        email_password = os.getenv('email_password')
+        
         # create email
         msg = EmailMessage()
         msg['Subject'] = "Reset Password Request"
         msg['From'] = email_address
-        msg['To'] = "ricardoguardiolahn@gmail.com" # type Email
+        msg['To'] = os.getenv('email_destination')
         msg.set_content(
         f"""\
         <html>
