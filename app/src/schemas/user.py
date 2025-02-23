@@ -56,9 +56,9 @@ class UserOutputMinimal(BaseModel):
     email: Optional[EmailStr] = None
 
 
-class ResetPassword(BaseException):
-    email: Optional[str]
-    password: Optional[str]
+class ResetPassword(BaseModel):
+    email: Optional[EmailStr]
+    password: Optional[str] = "password"
 
     class Config:
         orm_mode = True

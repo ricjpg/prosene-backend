@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import FastAPI, Depends, APIRouter, Header, HTTPException, status
+from fastapi import FastAPI, Depends, APIRouter, Header, HTTPException, status,Request, Form
 from ....schemas.user import UserInCreate, UserInLogin, UserWithToken, UserOutput, UserInUpdate, ResetPassword
 from ....database.database import get_db
 from sqlalchemy.orm import Session
@@ -11,9 +11,16 @@ from ....service.solicitudService import SolicitudService
 from ....schemas.solicitudes import SolicitudesCreate, SolicitudesOutput
 from ....schemas.formulario import FormularioCreate, FormularioOutput
 from ....service.formularioService import FormularioService
+from ....schemas.email import EmailSchema
+import smtplib
+from email.message import EmailMessage
+from starlette.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 
+from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
 router = APIRouter(tags=["users"])
+
 
 
 @router.post("/create", status_code=201, response_model=UserOutput, summary="Create a new user")
@@ -93,11 +100,53 @@ async def get_full_form(id : int, session : Session = Depends(get_db)):
         print(error)
         raise error
 
-@router.post("/resetpassword", status_code=200, summary="reset password")
-async def reset_password(data_input : UserInUpdate, session : Session = Depends(get_db)):
+@router.post("/resetpassword/{emailInput}", status_code=200, summary="reset password")
+async def reset_password(email_input:str, data:ResetPassword ,session : Session = Depends(get_db)):
+    data.email = email_input
+    user = UserService(session=session).get_user_by_email(data.email)
+    if user:
+        try:
+            return UserService(session=session).reset_password(email=data.email, password=data.password)
+        except Exception as error:
+            print(error)
+            raise error
+    return HTTPException(status_code=404, detail="usuario no encontrado")
+
+@router.post("/requestreset", status_code=200, summary="reques password reset")
+async def reset_password(mail_data : EmailSchema, session : Session=Depends(get_db)):
     try:
-        return UserService(session=session).reset_password(user_data=data_input)
+        user = UserService(session=session).get_user_by_email(mail_data.emailAddress)
+        persona = PersonaService(session=session).get_by_user_id(user.idusuario)
+        user_token =  UserService(session=session).generete_token(mail_data.emailAddress)
+        email_address = "ricardoguardiolahn@gmail.com" # type Email
+        email_password = "nhbhlrxmhkmdlymd" # If you do not have a gmail apps password, create a new app with using generate password. Check your apps and passwords https://myaccount.google.com/apppasswords
+
+        # create email
+        msg = EmailMessage()
+        msg['Subject'] = "Reset Password Request"
+        msg['From'] = email_address
+        msg['To'] = "ricardoguardiolahn@gmail.com" # type Email
+        msg.set_content(
+        f"""\
+        <html>
+            <body>
+                <p>Hi !!!
+                    <br>Al parecer olvidaste tu contraseña, no te preocupes 😁</p>
+                    <p>
+                    <br>Para cambiar tu contraseña accede al siguiente enlace: </p>
+                <a href="http://localhost:8000/api/v1/users/resetpassword/?emailInput={mail_data.emailAddress}" class="button">Cambiar mi contraseña</a>
+            </body>
+        </html> 
+        """, "html"
+        )
+
+        # msg.set_default_type("html")
+        # send email
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(email_address, email_password)
+            smtp.send_message(msg)
+    
+        return "email successfully sent"
     except Exception as error:
         print(error)
-        raise error
-
+        return error

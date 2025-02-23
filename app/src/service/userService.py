@@ -38,7 +38,7 @@ class UserService:
             return self.__userRepository.delete_user(email=email)
         raise HTTPException(status_code=404, detail="User not found")
     
-    def get_user_by_email(self, email : str) -> UserOutput:
+    def get_user_by_email(self, email : str):
         user = self.__userRepository.get_user_by_email(email=email)
         if user:
             return user
@@ -66,12 +66,22 @@ class UserService:
             return user
         raise HTTPException(status_code=404, detail="User not found")
     
-    def reset_password(self, user_data : UserInUpdate) -> str:
-        user = self.get_user_by_email(user_data.email)
+    def generete_token(self, email_input: str) -> str:
+        user = self.__userRepository.get_user_by_email(email_input)
+        print(user)
+        token = AuthHandler.sign_jwt(user_id=user.idusuario, role_id=user.role_id)
+        if token:
+            print(token)
+            return token
+        raise HTTPException(status_code=500, detail="Unable to process request")
+    
+    def reset_password(self, email:str, password:str)->str:
+        user = self.get_user_by_email(email)
         if user:
-            hashed_password = HashHelper.get_password_hash(plain_password=user_data.password)
-            user_data.password = hashed_password
-            user = self.__userRepository.reset_password(user_data=user_data)
+            hashed_password = HashHelper.get_password_hash(plain_password=password)
+            user.password = hashed_password
+            user = self.__userRepository.update_user(email=email, user_data=user)
             print(hashed_password)
-            return "Se ha cambiado la contraseña"
+
+            return user
         return HTTPException(status_code=404, detail="user not found")
