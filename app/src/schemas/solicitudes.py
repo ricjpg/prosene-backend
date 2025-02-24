@@ -9,7 +9,7 @@ from .user import UserOutput
 
 class SolicitudesCreate(BaseModel):
     idusuariosolicitante: Optional[int]
-    idresponsablesolicitud: Optional[int]
+    idresponsablesolicitud: Optional[int] = 1
     idtiposolicitud: int
     idestadosolicitud: Optional[int] = 1
     fechacreacion: Optional[datetime] = datetime.today

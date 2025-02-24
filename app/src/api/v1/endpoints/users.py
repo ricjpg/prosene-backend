@@ -19,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
-load_dotenv()
+load_dotenv(override=True)
 
 router = APIRouter(tags=["users"])
 
@@ -37,6 +37,7 @@ async def create_user(signUpDetails : UserInCreate, session : Session = Depends(
 
 @router.get("/all", response_model=list[UserOutput], summary="Get all users")
 async def get_all_users(session : Session = Depends(get_db))->list[UserOutput]:
+        print(os.getenv('DB_SERVER'))
     # if user.role_id == 1 or user.role_id == 2:
         try:
             return UserService(session=session).get_all_users()
@@ -102,8 +103,8 @@ async def get_full_form(id : int, session : Session = Depends(get_db)):
         print(error)
         raise error
 
-@router.post("/resetpassword/{emailInput}", status_code=200, summary="reset password")
-async def reset_password(email_input:str, data:ResetPassword ,session : Session = Depends(get_db)):
+@router.post("/resetpassword/{email_input}", status_code=200, summary="reset password")
+async def reset_password(email_input:str, data:ResetPassword, session : Session = Depends(get_db)):
     data.email = email_input
     user = UserService(session=session).get_user_by_email(data.email)
     if user:
@@ -132,11 +133,11 @@ async def reset_password(mail_data : EmailSchema, session : Session=Depends(get_
         f"""\
         <html>
             <body>
-                <p>Hi !!!
+                <p>Hola!!!
                     <br>Al parecer olvidaste tu contraseña, no te preocupes 😁</p>
                     <p>
                     <br>Para cambiar tu contraseña accede al siguiente enlace: </p>
-                <a href="http://localhost:8000/api/v1/users/resetpassword/?emailInput={mail_data.emailAddress}" class="button">Cambiar mi contraseña</a>
+                <a href="http://localhost:5173/usuario/cambiopass/{mail_data.emailAddress}" class="button">Cambiar mi contraseña</a>
             </body>
         </html> 
         """, "html"

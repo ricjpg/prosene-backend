@@ -45,16 +45,17 @@ class UserRepository(BaseRepository):
         user = self.get_user_by_email(email)
         if user:
             user.email = user_data.email
-            user.password = user_data.password
+            # user.password = user_data.password
             user.role_id = user_data.role_id
             user.idcentroregional = user_data.idcentroregional
             self.session.commit()
             self.session.refresh(instance=user)
             return user
-        raise Exception("User not found")
+        raise Exception("Usuario no encontrado")
 
-    def reset_password(self, user_data: UserInUpdate) -> str:
+    def reset_password(self, user_data: ResetPassword) -> str:
         user = self.get_user_by_email(user_data.email)
+        print(user)
         if user:
             user.password = user_data.password
             self.session.commit()

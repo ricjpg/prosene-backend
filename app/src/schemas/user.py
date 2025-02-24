@@ -31,7 +31,7 @@ class UserOutput(BaseModel):
 
 class UserInUpdate(BaseModel):
     email: Union[EmailStr, None] = None
-    password: Union[str, None] = None
+    # password: Union[str, None] = None
     role_id: Union[int, None] = 3
     isActive: Union[bool, None] = True
     idcentroregional: Optional[int] = 1

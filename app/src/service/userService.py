@@ -59,10 +59,10 @@ class UserService:
     def update_user(self, email:str, user_data : UserInUpdate) -> UserOutput:
         user = self.get_user_by_email(email)
         if user:
-            hashed_password = HashHelper.get_password_hash(plain_password=user_data.password)
-            user_data.password = hashed_password
+            # hashed_password = HashHelper.get_password_hash(plain_password=user_data.password)
+            # user_data.password = hashed_password
             user = self.__userRepository.update_user(email=email, user_data=user_data)
-            print(hashed_password)
+            # print(hashed_password)
             return user
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -77,10 +77,11 @@ class UserService:
     
     def reset_password(self, email:str, password:str)->str:
         user = self.get_user_by_email(email)
+        print(user)
         if user:
             hashed_password = HashHelper.get_password_hash(plain_password=password)
             user.password = hashed_password
-            user = self.__userRepository.update_user(email=email, user_data=user)
+            user = self.__userRepository.reset_password(user_data=user)
             print(hashed_password)
 
             return user
