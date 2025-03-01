@@ -128,7 +128,7 @@ async def reset_password(mail_data : EmailSchema, session : Session=Depends(get_
         msg = EmailMessage()
         msg['Subject'] = "Reset Password Request"
         msg['From'] = email_address
-        msg['To'] = os.getenv('email_destination')
+        msg['To'] = mail_data.emailAddress
         msg.set_content(
         f"""\
         <html>

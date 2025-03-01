@@ -13,18 +13,18 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(router)
-
 origins = [
-    "https://localhost:5173",
-    "http://localhost",
-    "http://localhost:8080",
+    "http://localhost:3000",  # React/Vite corriendo en este puerto
+    "http://localhost:5173",  # Vite por defecto
+    "http://localhost:4200",  # Angular por defecto
+    "http://localhost:8000",  # FastAPI mismo (si usas en frontend separado)
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],  # Include OPTIONS
+    allow_headers=["*"],  # Allow all headers
 )
+app.include_router(router)
