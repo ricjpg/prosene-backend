@@ -28,4 +28,13 @@ class AuthHandler(object):
         except:
             print("unable to decode the token")
             return None
+        
+    @staticmethod
+    def decode_token(token:str) -> dict:
+        try:
+            decoded = jwt.decode(token, options={"verify_signature": False})
+            return decoded
+        except:
+            print("unable to decode")
+            return None
             

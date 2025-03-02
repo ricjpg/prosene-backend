@@ -18,12 +18,14 @@ from starlette.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from jinja2 import Environment, FileSystemLoader
+from ....service.emailService import send_email
 
 load_dotenv(override=True)
 
 router = APIRouter(tags=["users"])
 
-
+env = Environment(loader=FileSystemLoader("templates"))
 
 @router.post("/create", status_code=201, response_model=UserOutput, summary="Create a new user")
 async def create_user(signUpDetails : UserInCreate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)):
@@ -103,53 +105,61 @@ async def get_full_form(id : int, session : Session = Depends(get_db)):
         print(error)
         raise error
 
-@router.post("/resetpassword/{email_input}", status_code=200, summary="reset password")
-async def reset_password(email_input:str, data:ResetPassword, session : Session = Depends(get_db)):
-    data.email = email_input
-    user = UserService(session=session).get_user_by_email(data.email)
-    if user:
-        try:
-            return UserService(session=session).reset_password(email=data.email, password=data.password)
-        except Exception as error:
-            print(error)
-            raise error
-    return HTTPException(status_code=404, detail="usuario no encontrado")
+# Legacy
+# @router.post("/resetpassword/{email_input}", status_code=200, summary="reset password")
+# async def reset_password(email_input:str, data:ResetPassword, session : Session = Depends(get_db)):
+#     data.email = email_input
+#     user = UserService(session=session).get_user_by_email(data.email)
+#     if user:
+#         try:
+#             return UserService(session=session).reset_password(email=data.email, password=data.password)
+#         except Exception as error:
+#             print(error)
+#             raise error
+#     return HTTPException(status_code=404, detail="usuario no encontrado")
 
-@router.post("/requestreset", status_code=200, summary="reques password reset")
+@router.post("/requestreset", status_code=200, summary="request password reset")
 async def reset_password(mail_data : EmailSchema, session : Session=Depends(get_db)):
     try:
         user = UserService(session=session).get_user_by_email(mail_data.emailAddress)
         persona = PersonaService(session=session).get_by_user_id(user.idusuario)
         user_token =  UserService(session=session).generete_token(mail_data.emailAddress)
-        email_address = os.getenv('email_address')
-        email_password = os.getenv('email_password')
+        # template = env.get_template("request_reset.html")
+        reset_url = f"http://localhost:5173/usuario/cambiopass/{user_token}"
         
-        # create email
-        msg = EmailMessage()
-        msg['Subject'] = "Reset Password Request"
-        msg['From'] = email_address
-        msg['To'] = mail_data.emailAddress
-        msg.set_content(
-        f"""\
-        <html>
-            <body>
-                <p>Hola!!!
-                    <br>Al parecer olvidaste tu contraseña, no te preocupes 😁</p>
-                    <p>
-                    <br>Para cambiar tu contraseña accede al siguiente enlace: </p>
-                <a href="http://localhost:5173/usuario/cambiopass/{mail_data.emailAddress}" class="button">Cambiar mi contraseña</a>
-            </body>
-        </html> 
-        """, "html"
+        template_data = {
+            "nombre": f"Hola",
+            "reset_url": reset_url
+        }
+        response = send_email(
+            to_email=mail_data.emailAddress,
+            subject="Reset Password Request",
+            template_name="reset_request.html",
+            template_data=template_data,
+            url_reset = reset_url
         )
+        return response
 
-        # msg.set_default_type("html")
-        # send email
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-            smtp.login(email_address, email_password)
-            smtp.send_message(msg)
+    except Exception as error:
+        print(error)
+        return error
     
-        return "email successfully sent"
+@router.post("/password/{token}", status_code=200, summary="reques password reset")
+async def reset_password(token: str, data_input: ResetPassword,session : Session=Depends(get_db)):
+    token_data =  UserService(session=session).get_payload(token=token)
+    print(token_data["user_id"])
+    print(token_data["role_id"])
+    print(token_data["expires"])
+    try:
+        user = UserService(session=session).get_user_by_id(token_data["user_id"])
+        data_input.email = user.email
+        if user:
+            try:
+                return UserService(session=session).reset_password(email=data_input.email, password=data_input.password)
+            except Exception as error:
+                print(error)
+                raise error
+        return HTTPException(status_code=404, detail="usuario no encontrado")
     except Exception as error:
         print(error)
         return error

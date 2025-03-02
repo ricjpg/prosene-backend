@@ -61,4 +61,4 @@ class UserRepository(BaseRepository):
             self.session.commit()
             self.session.refresh(instance=user)
             return "Se ha cambiado tu contraseña"
-        return HTTPException(status_code=404, detail="Usuario no encontrado")
+        return HTTPException(status_code=404, detail="Usuario no encontrado")    
