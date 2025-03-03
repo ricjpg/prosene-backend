@@ -19,7 +19,7 @@ from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from jinja2 import Environment, FileSystemLoader
-from ....service.emailService import send_email
+from ....service.emailService import send_email, welcome_mail
 
 load_dotenv(override=True)
 
@@ -31,11 +31,24 @@ env = Environment(loader=FileSystemLoader("templates"))
 async def create_user(signUpDetails : UserInCreate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)):
     if user.role_id == 1 or user.role_id == 2:
         try:
-            return UserService(session=session).signup(user_details=signUpDetails)
+            reset_url = f"http://localhost:5173/login"
+            template_data = {
+                "nombre": signUpDetails.email,
+                "reset_url": reset_url
+            }
+            response = welcome_mail(
+                to_email=signUpDetails.email,
+                subject="Bienvenido",
+                template_name="welcome_page.html",
+                template_data=template_data,
+                url_reset = reset_url
+            )
+            return UserService(session=session).signup(user_details=signUpDetails), response
         except Exception as error:
             print(error)
             raise error
     raise HTTPException(status_code=403, detail="Unauthorized, please contact the admin")
+    
 
 @router.get("/all", response_model=list[UserOutput], summary="Get all users")
 async def get_all_users(session : Session = Depends(get_db))->list[UserOutput]:
@@ -124,11 +137,11 @@ async def reset_password(mail_data : EmailSchema, session : Session=Depends(get_
         user = UserService(session=session).get_user_by_email(mail_data.emailAddress)
         persona = PersonaService(session=session).get_by_user_id(user.idusuario)
         user_token =  UserService(session=session).generete_token(mail_data.emailAddress)
-        # template = env.get_template("request_reset.html")
+
         reset_url = f"http://localhost:5173/usuario/cambiopass/{user_token}"
         
         template_data = {
-            "nombre": f"Hola",
+            "nombre": mail_data.emailAddress,
             "reset_url": reset_url
         }
         response = send_email(
