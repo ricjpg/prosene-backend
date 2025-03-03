@@ -97,13 +97,13 @@ async def add_details(persona_input : PersonaCreate, session : Session = Depends
         print(error)
         raise error
 
-@router.get("/formulario/{id}", status_code=200, summary="Obtener formulario completo")
-async def get_full_form(id : int, session : Session = Depends(get_db)):
-    try:
-        return FormularioService(session=session).get_form_by_user_id(user_id=id)
-    except Exception as error:
-        print(error)
-        raise error
+# @router.get("/formulario/{id}", status_code=200, summary="Obtener formulario completo")
+# async def get_full_form(id : int, session : Session = Depends(get_db)):
+#     try:
+#         return FormularioService(session=session).get_form_by_user_id(user_id=id)
+#     except Exception as error:
+#         print(error)
+#         raise error
 
 # Legacy
 # @router.post("/resetpassword/{email_input}", status_code=200, summary="reset password")

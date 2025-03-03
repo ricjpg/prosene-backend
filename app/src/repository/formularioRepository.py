@@ -35,9 +35,11 @@ class FormularioRepository(BaseRepository):
     
 
     def formulario_existe_por_idusuaro(self, user_id: int) -> bool:
-        user = self.session.query(Formulario).filter(Formulario.idusuario==user_id).first()
-        return bool(user)
-    
+        try:
+            user = self.session.query(Formulario).filter(Formulario.idusuario==user_id).first()
+            return bool(user)
+        except Exception as error:
+            raise HTTPException(status_code=404)
 
     def create_caracteristicas_educativas(self, caracteristicas_data: CaracteristicasEducativasCreate) -> CaracteristicasEducativasOutput:
         formulario = self.session.query(CaracteristicasEducativas).filter(CaracteristicasEducativas.idformulario==caracteristicas_data.idformulario).first()
@@ -82,7 +84,7 @@ class FormularioRepository(BaseRepository):
         return HTTPException(status_code=208)
 
     
-    def create_movilizacion(self, movilizacion_data: MovilizacionCreate) -> MovilizacionOutput:
+    def create_movilizacion(self, movilizacion_data: MovilizacionCreate)->MovilizacionOutput:
         formulario = self.session.query(Movilizacion).filter(Movilizacion.idformulario==movilizacion_data.idformulario).first()
         if not formulario:
             newMovilizacion = Movilizacion(**movilizacion_data.model_dump(exclude_none=True))
@@ -90,7 +92,8 @@ class FormularioRepository(BaseRepository):
             self.session.commit()
             self.session.refresh(instance=newMovilizacion)
             return newMovilizacion
-        return Exception("El formulario ya tiene el apartado de MOVILIZACION")
+        return HTTPException(status_code=208)
+    
     
     def create_servicios(self, servicios_data: ServiciosCreate) -> ServiciosOutput:
         formulario = self.session.query(Servicios).filter(Servicios.idformulario==servicios_data.idformulario).first()
@@ -106,48 +109,59 @@ class FormularioRepository(BaseRepository):
         formulario = self.session.query(Formulario).filter(Formulario.idformulario==form_id).first()
         return formulario
     
-    def get_full_form_by_id(self, form_id:int) -> FormularioFull:
-        formulario = self.session.query(Formulario).filter(Formulario.idformulario==form_id).first()
-        caracteristicas = self.session.query(CaracteristicasEducativas).filter(CaracteristicasEducativas.idformulario==form_id).first()
-        comunicacion = self.session.query(Comunicacion).filter(Comunicacion.idformulario==form_id).first()
-        deficiencia = self.session.query(Deficiencia).filter(Deficiencia.idformulario==form_id).first()
-        discapacidad = self.session.query(Discapacidad).filter(Discapacidad.idformulario==form_id).first()
-        movilizacion = self.session.query(Movilizacion).filter(Movilizacion.idformulario==form_id).first()
-        servicios = self.session.query(Servicios).filter(Servicios.idformulario==form_id).first()
-        persona = self.session.query(Persona).filter(Persona.idusuario==formulario.idusuario).first()
-        usuario = self.session.query(User).filter(User.idusuario == formulario.idusuario).first()
-        return {
-            "usuario": usuario,
-            "detalles personales": persona,
-            "formulario": formulario,
-            "caracteristicas": caracteristicas,
-            "comunicacion": comunicacion,
-            "deficiencia": deficiencia,
-            "discapacidad": discapacidad,
-            "movilizacion": movilizacion,
-            "servicios": servicios
-        }
+    def get_full_form_by_id(self, user_id:int) -> FormularioFull:
+        try:
+            formulario = self.session.query(Formulario).filter(Formulario.idusuario==user_id).first()
+            if formulario:
+                caracteristicas = self.session.query(CaracteristicasEducativas).filter(CaracteristicasEducativas.idformulario==formulario.idformulario).first()
+                comunicacion = self.session.query(Comunicacion).filter(Comunicacion.idformulario==formulario.idformulario).first()
+                deficiencia = self.session.query(Deficiencia).filter(Deficiencia.idformulario==formulario.idformulario).first()
+                discapacidad = self.session.query(Discapacidad).filter(Discapacidad.idformulario==formulario.idformulario).first()
+                movilizacion = self.session.query(Movilizacion).filter(Movilizacion.idformulario==formulario.idformulario).first()
+                servicios = self.session.query(Servicios).filter(Servicios.idformulario==formulario.idformulario).first()
+                persona = self.session.query(Persona).filter(Persona.idusuario==formulario.idusuario).first()
+                usuario = self.session.query(User).filter(User.idusuario == formulario.idusuario).first()
+                return {
+                    "usuario": usuario,
+                    "detalles personales": persona,
+                    "formulario": formulario,
+                    "caracteristicas": caracteristicas,
+                    "comunicacion": comunicacion,
+                    "deficiencia": deficiencia,
+                    "discapacidad": discapacidad,
+                    "movilizacion": movilizacion,
+                    "servicios": servicios
+                }
+            raise HTTPException(status_code=404, detail="No tiene formulario de inscripcion")
+        except Exception as error:
+            raise HTTPException(status_code=204)
     
     def get_form_by_user_id(self, user_id:int) ->FormularioOutput:
-        formulario = self.session.query(Formulario).filter(Formulario.idformulario==user_id).first()
-        return formulario
+        try:
+            formulario = self.session.query(Formulario).filter(Formulario.idformulario==user_id).first()
+            return formulario
+        except Exception as error:
+            raise HTTPException(status_code=204)
     
     def get_full_form_by_user(self, user_id:int) -> FormularioFull:
-        formulario = self.session.query(Formulario).filter(Formulario.idusuario==user_id).first()
-        if formulario:
-            caracteristicas = self.session.query(CaracteristicasEducativas).filter(CaracteristicasEducativas.idformulario==formulario.idformulario).first()
-            comunicacion = self.session.query(Comunicacion).filter(Comunicacion.idformulario==formulario.idformulario).first()
-            deficiencia = self.session.query(Deficiencia).filter(Deficiencia.idformulario==formulario.idformulario).first()
-            discapacidad = self.session.query(Discapacidad).filter(Discapacidad.idformulario==formulario.idformulario).first()
-            movilizacion = self.session.query(Movilizacion).filter(Movilizacion.idformulario==formulario.idformulario).first()
-            servicios = self.session.query(Servicios).filter(Servicios.idformulario==formulario.idformulario).first()
-            return {
-                "formulario": formulario,
-                "caracteristicas": caracteristicas,
-                "comunicacion": comunicacion,
-                "deficiencia": deficiencia,
-                "discapacidad": discapacidad,
-                "movilizacion": movilizacion,
-                "servicios": servicios
-            }
-        return HTTPException(status_code=404, detail="Este usuario no tiene formulario de inscripcion")
+        try:
+            formulario = self.session.query(Formulario).filter(Formulario.idusuario==user_id).first()
+            if formulario:
+                caracteristicas = self.session.query(CaracteristicasEducativas).filter(CaracteristicasEducativas.idformulario==formulario.idformulario).first()
+                comunicacion = self.session.query(Comunicacion).filter(Comunicacion.idformulario==formulario.idformulario).first()
+                deficiencia = self.session.query(Deficiencia).filter(Deficiencia.idformulario==formulario.idformulario).first()
+                discapacidad = self.session.query(Discapacidad).filter(Discapacidad.idformulario==formulario.idformulario).first()
+                movilizacion = self.session.query(Movilizacion).filter(Movilizacion.idformulario==formulario.idformulario).first()
+                servicios = self.session.query(Servicios).filter(Servicios.idformulario==formulario.idformulario).first()
+                return {
+                    "formulario": formulario,
+                    "caracteristicas": caracteristicas,
+                    "comunicacion": comunicacion,
+                    "deficiencia": deficiencia,
+                    "discapacidad": discapacidad,
+                    "movilizacion": movilizacion,
+                    "servicios": servicios
+                }
+            return HTTPException(status_code=404, detail="Este usuario no tiene formulario de inscripcion")
+        except Exception as error:
+            raise HTTPException(status_code=204)
