@@ -40,6 +40,19 @@ async def obtener_mis_solicitudes(session : Session = Depends(get_db), user : Us
         raise error
     
     
+@router.get("/{solicitud_id}", status_code=200, summary="obtener solicitud por id solicitud")
+async def obtener_mis_solicitudes(solicitud_id:int, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
+    try:
+        solicitud = SolicitudService(session=session).get_solicitud_por_id(solicitud_id)
+        usuario_id = user.idusuario
+        if solicitud.idusuariosolicitante == usuario_id:
+            return solicitud
+        return HTTPException(status_code=401)
+    except Exception as error:
+        print(error)
+        raise error
+    
+    
 @router.get("/all", status_code=200, summary="Todas las solicitudes hechas")
 async def get_all(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[SolicitudesOutput]:
     try:

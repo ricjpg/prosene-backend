@@ -37,4 +37,7 @@ class SolicitudService:
         # if solicitud:
             return self.__solicitudRepositoy.editar_solicitud(solicitudUpdate)
         # return HTTPException(status_code=404, detail="No se encontro la solicitud")
+
+    def get_solicitud_por_id(self, solicitud_id: int)->SolicitudesOutput:
+        return self.__solicitudRepositoy.get_solicitud_by_id(solicitud_id)
     
