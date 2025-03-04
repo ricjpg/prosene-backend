@@ -1,3 +1,4 @@
+import os
 from typing import List
 from fastapi import FastAPI, Depends, APIRouter, Header, HTTPException, status,Request, Form
 from ....schemas.user import UserInCreate, UserInLogin, UserWithToken, UserOutput, UserInUpdate, ResetPassword
@@ -7,17 +8,10 @@ from ....service.userService import UserService
 from ....utils.protectRoute import get_current_user
 from ....service.personaService import PersonaService
 from ....schemas.persona import PersonaCreate, PersonaOutput
-from ....service.solicitudService import SolicitudService
-from ....schemas.solicitudes import SolicitudesCreate, SolicitudesOutput
-from ....schemas.formulario import FormularioCreate, FormularioOutput
-from ....service.formularioService import FormularioService
 from ....schemas.email import EmailSchema
-import smtplib, os
-from email.message import EmailMessage
-from starlette.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
+from ....schemas.notificaciones import NotificacionOutput
+from ....service.notificacionesService import NotificacionesService
 from dotenv import load_dotenv
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from jinja2 import Environment, FileSystemLoader
 from ....service.emailService import send_email, welcome_mail
 
@@ -176,3 +170,12 @@ async def reset_password(token: str, data_input: ResetPassword,session : Session
     except Exception as error:
         print(error)
         return error
+    
+@router.get("/notificaciones", status_code=200, summary="mis notificaciones")
+async def mis_notificaciones(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[NotificacionOutput]:
+    try:
+        usuario_id = user.idusuario
+        return NotificacionesService(session=session).get_my_notificaciones(usuario_id)
+    except Exception as error:
+        print(error)
+        raise error

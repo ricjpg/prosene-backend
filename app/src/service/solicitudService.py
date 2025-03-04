@@ -1,17 +1,35 @@
 from sqlalchemy.orm import Session
+from datetime import date
 from ..repository.solicitudRepository import SolicitudRepository
+from ..repository.notificacionesRepository import NotificacionesRepository
 from ..schemas.solicitudes import SolicitudesOutput, SolicitudesCreate, SolicitudUpdate, SolicitudEditar
+from ..schemas.notificaciones import NotificacionCreate, NotificacionOutput
 from fastapi import HTTPException
 
 class SolicitudService:
     def __init__(self, session : Session):
         self.__solicitudRepositoy = SolicitudRepository(session=session)
+        self.__notificacionesRepository = NotificacionesRepository(session=session)
 
 
     def create_solicitud(self, solicitud_details: SolicitudesCreate)->SolicitudesOutput:
-        return self.__solicitudRepositoy.create_solicitud(solicitud_details)
+        nueva_solicitud = self.__solicitudRepositoy.create_solicitud(solicitud_details)
+        notificacion_data = {
+            'idsolicitud' : nueva_solicitud.idsolicitud,
+            'idusuario' : nueva_solicitud.idusuariosolicitante,
+            'isread' : False,
+            'create_date' : date.today(),
+            'update_date' : date.today(),
+        }
+        noti = self.create_notificacion(notificacion_data)
+        return nueva_solicitud
     
+    def create_notificacion(self, notificacion_data: NotificacionCreate)->NotificacionOutput:
+        nueva_notificacion = self.__notificacionesRepository.create_notificacion(notificacion_data)
+        return nueva_notificacion
+
     def solicitud_cambio_estado(self, nueva_data: SolicitudUpdate) -> SolicitudesOutput:
+        self.__notificacionesRepository.create_notificacion(nueva_data.idsolicitud)
         return self.__solicitudRepositoy.solicitud_cambio_estado(nueva_data)
     
     def obtener_mis_solicitudes(self, usuario_id:int)-> list[SolicitudesOutput]:

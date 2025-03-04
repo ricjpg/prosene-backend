@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from ....utils.protectRoute import get_current_user
 from ....service.solicitudService import SolicitudService
 from ....schemas.solicitudes import SolicitudesCreate, SolicitudesOutput, SolicitudUpdate, SolicitudEditar  
-
+from ....schemas.notificaciones import NotificacionCreate, NotificacionOutput
+from ....service.solicitudService import SolicitudesCreate
 
 router = APIRouter(tags=["solicitudes"])
 
@@ -15,7 +16,8 @@ router = APIRouter(tags=["solicitudes"])
 async def create_solicitud(solicitud_input : SolicitudesCreate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
     try:
         solicitud_input.idusuariosolicitante = user.idusuario
-        return SolicitudService(session=session).create_solicitud(solicitud_details=solicitud_input)
+        solicitud = SolicitudService(session=session).create_solicitud(solicitud_details=solicitud_input)
+        return solicitud
     except Exception as error:
         print(error)
         raise error
