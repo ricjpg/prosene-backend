@@ -21,5 +21,11 @@ class NotificacionesService:
         notificacion = self.__notificacionesRepository.get_notification_por_id_notificacion(id_notification)
         if notificacion:
             return self.__notificacionesRepository.mark_as_read(id_notification)
-        return HTTPException(status_code=404, detail="Notificacion no encontrada")
+        return HTTPException(status_code=404, detail="No se encontro la notificacion")
+    
+    def get_notificacion(self, id_notificacion:int)->NotificacionOutput:
+        notificacion = self.__notificacionesRepository.get_notification_por_id_notificacion(id_notificacion)
+        if notificacion:
+            return notificacion
+        return HTTPException(status_code=404, detail="No se encontro la notificacion")
     
