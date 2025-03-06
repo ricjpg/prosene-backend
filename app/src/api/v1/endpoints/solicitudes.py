@@ -36,14 +36,16 @@ async def actualizar_estado(nueva_data : SolicitudUpdate, session : Session = De
 async def obtener_mis_solicitudes(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[SolicitudesOutput]:
     try:
         usuario_id = user.idusuario
-        return SolicitudService(session=session).obtener_mis_solicitudes(usuario_id)
+        solicitudes = SolicitudService(session=session).obtener_mis_solicitudes(usuario_id)
+        if solicitudes:
+            return solicitudes
     except Exception as error:
         print(error)
         raise error
     
     
-@router.get("/{solicitud_id}", status_code=200, summary="obtener solicitud por id solicitud")
-async def obtener_mis_solicitudes(solicitud_id:int, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
+@router.get("/get/{solicitud_id}", status_code=200, summary="obtener solicitud por id solicitud")
+async def obtener_notificacion(solicitud_id:int, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
     try:
         solicitud = SolicitudService(session=session).get_solicitud_por_id(solicitud_id)
         usuario_id = user.idusuario
@@ -56,12 +58,15 @@ async def obtener_mis_solicitudes(solicitud_id:int, session : Session = Depends(
     
     
 @router.get("/all", status_code=200, summary="Todas las solicitudes hechas")
-async def get_all(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[SolicitudesOutput]:
-    try:
-        return SolicitudService(session=session).get_all()
-    except Exception as error:
-        print(error)
-        raise error
+async def get_all(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user))->list[SolicitudesOutput]:
+    if user.role_id == 1 or user.role_id == 2:
+        try:
+            response = SolicitudService(session=session).get_all()
+            return response
+        except Exception as error:
+            # print(error)
+            return HTTPException(status_code=500)
+    raise HTTPException(status_code=401)
     
     
 @router.get("/tipo/{id}", status_code=200, summary="solicitudes por tipo")

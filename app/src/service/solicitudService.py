@@ -36,7 +36,7 @@ class SolicitudService:
         solicitudes = self.__solicitudRepositoy.obtener_mis_solicitudes(usuario_id)
         if solicitudes:
             return solicitudes
-        return HTTPException(status_code=404, detail="No tienes solicitudes creadas")
+        raise HTTPException(status_code=404, detail="No tienes solicitudes creadas")
     
     def get_all(self)->list[SolicitudesOutput]:
         return self.__solicitudRepositoy.get_all_solicitudes()
@@ -48,7 +48,7 @@ class SolicitudService:
         solicitudes = self.__solicitudRepositoy.get_solicitudes_por_tipo(tipo_id)
         if solicitudes:
             return solicitudes
-        return HTTPException(status_code=404, detail="no se encontraron solicitudes de este tipo")
+        raise HTTPException(status_code=404, detail="no se encontraron solicitudes de este tipo")
     
     def editar_solicitud(self, solicitudUpdate:SolicitudEditar)->SolicitudesOutput:
         # solicitud = self.__solicitudRepositoy.get_solicitud_by_id(solicitudUpdate.idsolicitud)

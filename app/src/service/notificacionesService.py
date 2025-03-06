@@ -15,17 +15,17 @@ class NotificacionesService:
         solicitudes = self.__notificacionesRepository.get_all_notficiacion_por_usuario(usuario_id)
         if solicitudes:
             return solicitudes
-        return HTTPException(status_code=404, detail="No tienes solicitudes creadas")
+        raise HTTPException(status_code=404, detail="No tienes solicitudes creadas")
 
     def mark_as_read(self, id_notification:int)->NotificacionOutput:
         notificacion = self.__notificacionesRepository.get_notification_por_id_notificacion(id_notification)
         if notificacion:
             return self.__notificacionesRepository.mark_as_read(id_notification)
-        return HTTPException(status_code=404, detail="No se encontro la notificacion")
+        raise HTTPException(status_code=404, detail="No se encontro la notificacion")
     
     def get_notificacion(self, id_notificacion:int)->NotificacionOutput:
         notificacion = self.__notificacionesRepository.get_notification_por_id_notificacion(id_notificacion)
         if notificacion:
             return notificacion
-        return HTTPException(status_code=404, detail="No se encontro la notificacion")
+        raise HTTPException(status_code=404, detail="No se encontro la notificacion")
     

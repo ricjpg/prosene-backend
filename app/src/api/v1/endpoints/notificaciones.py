@@ -1,6 +1,6 @@
 import os
 from typing import List
-from fastapi import FastAPI, Depends, APIRouter, Header, HTTPException, status,Request, Form
+from fastapi import FastAPI, Depends, APIRouter, Header, HTTPException, status,Request, Form, Response
 from ....schemas.user import UserInCreate, UserInLogin, UserWithToken, UserOutput, UserInUpdate, ResetPassword
 from ....database.database import get_db
 from sqlalchemy.orm import Session
@@ -21,25 +21,32 @@ env = Environment(loader=FileSystemLoader("templates"))
 async def mis_notificaciones(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[NotificacionOutput]:
     try:
         usuario_id = user.idusuario
-        return NotificacionesService(session=session).get_my_notificaciones(usuario_id)
+        notificaciones = NotificacionesService(session=session).get_my_notificaciones(usuario_id)
+        if notificaciones:
+            return notificaciones
+        raise HTTPException(status_code=404, detail='No tienes ninguna notificacion')
     except Exception as error:
-        print(error)
-        raise error
+        # print(error)
+        raise HTTPException(status_code=404, detail="No tienes notificaciones")
     
 @router.get('/{id}', status_code=200, summary="obtener notificacion por id")
-async def get_notificacion(id:int,session:Session=Depends(get_db), user : UserOutput = Depends(get_current_user))->NotificacionOutput:
-    notificacion = NotificacionesService(session=session).get_notificacion(id)
-    if notificacion.idusuario == user.idusuario:
-        try:
-            return NotificacionesService(session=session).get_notificacion(id)
-        except Exception as error:
-            raise error
-    return HTTPException(status_code=401, detail="Esta solicitud no te pertenece")
+async def get_notificacion(id:int,session:Session=Depends(get_db), user : UserOutput = Depends(get_current_user))-> NotificacionOutput:
+    try:
+        notificacion = NotificacionesService(session=session).get_notificacion(id)
+        if notificacion:
+            if notificacion.idusuario == user.idusuario:
+                return notificacion
+    except Exception as error:
+        raise HTTPException(status_code=404)
     
+
 
 @router.put('/{id}', status_code=200, summary="marcar notificacion como leida")
 async def mark_as_read(id:int,session:Session=Depends(get_db))->NotificacionOutput:
     try:
-        return NotificacionesService(session=session).mark_as_read(id)
+        notificacion = NotificacionesService(session=session).get_notificacion(id)
+        if notificacion:
+            return NotificacionesService(session=session).mark_as_read(id)
     except Exception as error:
-        raise error
+        raise HTTPException (status_code=404)
+    raise HTTPException(status_code=404)
