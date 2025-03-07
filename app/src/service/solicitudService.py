@@ -14,14 +14,14 @@ class SolicitudService:
 
     def create_solicitud(self, solicitud_details: SolicitudesCreate)->SolicitudesOutput:
         nueva_solicitud = self.__solicitudRepositoy.create_solicitud(solicitud_details)
-        notificacion_data = {
-            'idsolicitud' : nueva_solicitud.idsolicitud,
-            'idusuario' : nueva_solicitud.idusuariosolicitante,
-            'isread' : False,
-            'create_date' : date.today(),
-            'update_date' : date.today(),
-        }
-        noti = self.create_notificacion(notificacion_data)
+        # notificacion_data = {
+        #     'idsolicitud' : nueva_solicitud.idsolicitud,
+        #     'idusuario' : nueva_solicitud.idusuariosolicitante,
+        #     'isread' : False,
+        #     'create_date' : date.today(),
+        #     'update_date' : date.today(),
+        # }
+        # noti = self.create_notificacion(notificacion_data)
         return nueva_solicitud
     
     def create_notificacion(self, notificacion_data: NotificacionCreate)->NotificacionOutput:
@@ -29,7 +29,16 @@ class SolicitudService:
         return nueva_notificacion
 
     def solicitud_cambio_estado(self, nueva_data: SolicitudUpdate) -> SolicitudesOutput:
-        self.__notificacionesRepository.create_notificacion(nueva_data.idsolicitud)
+        solicitud = self.__solicitudRepositoy.get_solicitud_by_id(nueva_data.idsolicitud)
+        print(solicitud.idusuariosolicitante)
+        data_notificacion = {
+                'idsolicitud': nueva_data.idsolicitud,
+                'isread': False,
+                'idusuario': solicitud.idusuariosolicitante,
+                'create_date': date.today(),
+                'update_date': date.today()
+        }
+        self.__notificacionesRepository.create_notificacion(data_notificacion)
         return self.__solicitudRepositoy.solicitud_cambio_estado(nueva_data)
     
     def obtener_mis_solicitudes(self, usuario_id:int)-> list[SolicitudesOutput]:
