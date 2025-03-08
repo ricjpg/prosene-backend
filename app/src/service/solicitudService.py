@@ -11,17 +11,16 @@ class SolicitudService:
         self.__solicitudRepositoy = SolicitudRepository(session=session)
         self.__notificacionesRepository = NotificacionesRepository(session=session)
 
-
     def create_solicitud(self, solicitud_details: SolicitudesCreate)->SolicitudesOutput:
         nueva_solicitud = self.__solicitudRepositoy.create_solicitud(solicitud_details)
-        # notificacion_data = {
-        #     'idsolicitud' : nueva_solicitud.idsolicitud,
-        #     'idusuario' : nueva_solicitud.idusuariosolicitante,
-        #     'isread' : False,
-        #     'create_date' : date.today(),
-        #     'update_date' : date.today(),
-        # }
-        # noti = self.create_notificacion(notificacion_data)
+        notificacion_data = {
+             'idsolicitud' : nueva_solicitud.idsolicitud,
+             'idusuario' : nueva_solicitud.idusuariosolicitante,
+             'isread' : False,
+             'create_date' : date.today(),
+             'update_date' : date.today(),
+        }
+        self.__notificacionesRepository.create_notificacion(notificacion_data)
         return nueva_solicitud
     
     def create_notificacion(self, notificacion_data: NotificacionCreate)->NotificacionOutput:
@@ -34,7 +33,7 @@ class SolicitudService:
         data_notificacion = {
                 'idsolicitud': nueva_data.idsolicitud,
                 'isread': False,
-                'idusuario': solicitud.idusuariosolicitante,
+                'idusuario': 1,
                 'create_date': date.today(),
                 'update_date': date.today()
         }
@@ -51,8 +50,7 @@ class SolicitudService:
         return self.__solicitudRepositoy.get_all_solicitudes()
     
     def get_solicitudes_por_estado(self, estado_id:int)-> list[SolicitudesOutput]:
-        return self.__solicitudRepositoy.
-        (estado_id)
+        return self.__solicitudRepositoy(estado_id)
     
     def get_solicitudes_por_tipo(self, tipo_id:int ) ->list[SolicitudesOutput]:
         solicitudes = self.__solicitudRepositoy.get_solicitudes_por_tipo(tipo_id)

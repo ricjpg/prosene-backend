@@ -46,11 +46,18 @@ class NotificacionesRepository(BaseRepository):
 
         return "Notificación " + str(notification.idnotificacion) + " eliminada"
     
-
+    '''
     def get_all_notificacion_por_admin(self) -> list[NotificacionOutput]:
         notificaciones= self.session.query(Notificaciones).join(Solicitudes, Notificaciones.idsolicitud == Solicitudes.idsolicitud).filter(Solicitudes.idestadosolicitud == 1).order_by(Notificaciones.update_date).limit(20).all()
         #solicitudes= self.session.query(Solicitudes).filter(Solicitudes.estadosolicitud==1).order_by(Solicitudes.fechacreacion).limit(20)
-        
+
+        if notificaciones:
+            return notificaciones
+        raise HTTPException(status_code=404, detail="No tienes notificaciones")
+    '''
+    def get_all_notificacion_por_admin(self) -> list[NotificacionOutput]:
+        notificaciones= self.session.query(Notificaciones).filter(Notificaciones.idusuario== 1).order_by(Notificaciones.update_date).limit(20).all()
+        #solicitudes= self.session.query(Solicitudes).filter(Solicitudes.estadosolicitud==1).order_by(Solicitudes.fechacreacion).limit(20)
 
         if notificaciones:
             return notificaciones

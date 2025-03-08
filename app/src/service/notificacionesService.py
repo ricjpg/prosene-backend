@@ -39,6 +39,7 @@ class NotificacionesService:
     
     def get_my_notificaciones_admin(self, usuario_id:int)-> list[NotificacionOutput]:
         notificaciones = self.__notificacionesRepository.get_all_notificacion_por_admin()
+        
         if notificaciones:
             return notificaciones
         raise HTTPException(status_code=404, detail="No tienes notificaciones")
