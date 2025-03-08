@@ -20,3 +20,5 @@ class NotificacionOutput(BaseModel):
     update_date: Optional[date]
     solicitudes: Optional[SolicitudesOutput]
 
+class DeleteNotificationResponse(BaseModel):
+    mensaje: str

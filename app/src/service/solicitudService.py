@@ -51,7 +51,8 @@ class SolicitudService:
         return self.__solicitudRepositoy.get_all_solicitudes()
     
     def get_solicitudes_por_estado(self, estado_id:int)-> list[SolicitudesOutput]:
-        return self.__solicitudRepositoy.get_solicitudes_por_estado(estado_id)
+        return self.__solicitudRepositoy.
+        (estado_id)
     
     def get_solicitudes_por_tipo(self, tipo_id:int ) ->list[SolicitudesOutput]:
         solicitudes = self.__solicitudRepositoy.get_solicitudes_por_tipo(tipo_id)

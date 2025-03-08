@@ -29,3 +29,16 @@ class NotificacionesService:
             return notificacion
         raise HTTPException(status_code=404, detail="No se encontro la notificacion")
     
+    def delete_notification(self, id_notificacion:int):
+        resultado = self.__notificacionesRepository.delete_notification_por_id_notificacion(id_notificacion)
+    
+        if resultado == "Notificación no encontrada":
+            raise HTTPException(status_code=404, detail="No se encontró la notificación")
+
+        return {"message": resultado}
+    
+    def get_my_notificaciones_admin(self, usuario_id:int)-> list[NotificacionOutput]:
+        notificaciones = self.__notificacionesRepository.get_all_notificacion_por_admin()
+        if notificaciones:
+            return notificaciones
+        raise HTTPException(status_code=404, detail="No tienes notificaciones")
