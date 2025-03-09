@@ -8,8 +8,8 @@ class NotificacionCreate(BaseModel):
     idsolicitud: Optional[int]
     isread: Optional[bool] = False
     idusuario: Optional[int]
-    create_date: Optional[date] = date.today
-    update_date: Optional[date] = date.today
+    create_date: Optional[date] = date.today()
+    update_date: Optional[date] = date.today()
     
     
 class NotificacionOutput(BaseModel):

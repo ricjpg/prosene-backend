@@ -179,3 +179,12 @@ async def mis_notificaciones(session : Session = Depends(get_db), user : UserOut
     except Exception as error:
         print(error)
         raise error
+    
+@router.get("/admins", status_code=200, summary="Listar los colaboradores")
+async def get_admins(session: Session = Depends(get_db)) -> list[UserOutput]:
+    try:
+        admins = UserService(session=session).get_admins()
+        if admins:
+            return admins
+    except Exception as error:
+        raise HTTPException(status_code=404)

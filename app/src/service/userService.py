@@ -92,3 +92,5 @@ class UserService:
         print(token_data)
         return token_data
     
+    def get_admins(self):
+        return self.__userRepository.get_admins()
