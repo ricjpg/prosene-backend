@@ -1,10 +1,12 @@
 from .base import BaseRepository
 from fastapi import HTTPException
 from ..models.solicitudes import Solicitudes
-from ..schemas.solicitudes import SolicitudesCreate, SolicitudesOutput, SolicitudUpdate, SolicitudEditar
+from ..schemas.solicitudes import SolicitudesCreate, SolicitudesOutput, SolicitudUpdate, SolicitudEditar, AsignarSchema
 from ..schemas.estadoSolicitud import EstadoSolicitudOutput
 from ..models.tipoSolicitud import TipoSolicitud
 from ..models.estadoSolicitud import EstadoSolicitud
+from .userRepository import UserRepository
+from ..models.user import User
 
 
 class SolicitudRepository(BaseRepository):
@@ -70,4 +72,18 @@ class SolicitudRepository(BaseRepository):
         raise HTTPException(status_code=404, detail="No se encontro la solicitud")
                 
                 
-    
+    def asignar_solicitud(self, data: AsignarSchema) ->SolicitudesOutput:
+        try:
+            solicitud = self.session.query(Solicitudes).filter(Solicitudes.idsolicitud == data.idsolicitud).first()
+            usuario = self.session.query(User).filter(User.idusuario == data.idresponsablesolicitud).first()
+            if not solicitud:
+                raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+            if not usuario:
+                raise HTTPException(status_code=404, detail="Usuario no encontrado")
+            solicitud.idresponsablesolicitud = usuario.idusuario
+            self.session.commit()
+            self.session.refresh(solicitud)
+            return solicitud
+        except Exception as error:
+            raise HTTPException(status_code=500, detail=str(error))
+

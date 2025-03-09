@@ -5,7 +5,7 @@ from ....database.database import get_db
 from sqlalchemy.orm import Session
 from ....utils.protectRoute import get_current_user
 from ....service.solicitudService import SolicitudService
-from ....schemas.solicitudes import SolicitudesCreate, SolicitudesOutput, SolicitudUpdate, SolicitudEditar  
+from ....schemas.solicitudes import SolicitudesCreate, SolicitudesOutput, SolicitudUpdate, SolicitudEditar, AsignarSchema
 from ....schemas.notificaciones import NotificacionCreate, NotificacionOutput
 from ....service.solicitudService import SolicitudesCreate
 
@@ -49,9 +49,9 @@ async def obtener_notificacion(solicitud_id:int, session : Session = Depends(get
     try:
         solicitud = SolicitudService(session=session).get_solicitud_por_id(solicitud_id)
         usuario_id = user.idusuario
-        if solicitud.idusuariosolicitante == usuario_id:
+        if solicitud.idusuariosolicitante == usuario_id or user.role_id==1 or user.role_id==2:
             return solicitud
-        return HTTPException(status_code=401)
+        raise HTTPException(status_code=401)
     except Exception as error:
         print(error)
         raise error
@@ -95,4 +95,9 @@ async def obtener_por_estado(solicitudUpdate:SolicitudEditar, session : Session 
         print(error)
         raise error
     
-
+@router.put("/asignar", status_code=200, summary="Asignar solicitud a un colaborador")
+async def asignar_solicitud(data: AsignarSchema, session: Session = Depends(get_db))-> SolicitudesOutput:
+    try:
+        return SolicitudService(session=session).asignar_solicitud(data)
+    except Exception as error:
+        raise error

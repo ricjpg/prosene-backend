@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from datetime import date
 from ..repository.solicitudRepository import SolicitudRepository
 from ..repository.notificacionesRepository import NotificacionesRepository
-from ..schemas.solicitudes import SolicitudesOutput, SolicitudesCreate, SolicitudUpdate, SolicitudEditar
+from ..schemas.solicitudes import SolicitudesOutput, SolicitudesCreate, SolicitudUpdate, SolicitudEditar, AsignarSchema
 from ..schemas.notificaciones import NotificacionCreate, NotificacionOutput
 from fastapi import HTTPException
 
@@ -67,4 +67,7 @@ class SolicitudService:
 
     def get_solicitud_por_id(self, solicitud_id: int)->SolicitudesOutput:
         return self.__solicitudRepositoy.get_solicitud_by_id(solicitud_id)
+    
+    def asignar_solicitud(self, data: AsignarSchema)->SolicitudesOutput:
+        return self.__solicitudRepositoy.asignar_solicitud(data)
     

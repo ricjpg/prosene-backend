@@ -44,3 +44,7 @@ class SolicitudEditar(BaseModel):
     descripcion: Optional[str] = None
     class Config:
         orm_mode = True
+
+class AsignarSchema(BaseModel):
+    idsolicitud: Optional[int]
+    idresponsablesolicitud: Optional[int]
