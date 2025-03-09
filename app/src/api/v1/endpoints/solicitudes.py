@@ -15,7 +15,6 @@ router = APIRouter(tags=["solicitudes"])
 @router.post("/nueva", status_code=200, summary="Crear nueva solicitud")
 async def create_solicitud(solicitud_input : SolicitudesCreate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
     try:
-        print(f"Usuario autenticado: {user}") 
         solicitud_input.idusuariosolicitante = user.idusuario
         solicitud = SolicitudService(session=session).create_solicitud(solicitud_details=solicitud_input)
         return solicitud
