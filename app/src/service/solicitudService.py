@@ -12,21 +12,15 @@ class SolicitudService:
     def __init__(self, session : Session):
         self.__solicitudRepositoy = SolicitudRepository(session=session)
         self.__notificacionesRepository = NotificacionesRepository(session=session)
+        self.__rolesRepository = RolesRepository(session=session)
 
     def create_solicitud(self, solicitud_details: SolicitudesCreate)->SolicitudesOutput:
         nueva_solicitud = self.__solicitudRepositoy.create_solicitud(solicitud_details)
         
-        roles_repo = RolesRepository(self.session)
-        roles_admins = roles_repo.get_all_roles()  
+        usuarios_admins = self.__rolesRepository.get_users_by_roles([1, 2])
+       # if not usuarios_admins:
+         #   raise HTTPException(status_code=404, detail="No hay usuarios con rol de administrador o superusuario")
 
-        roles_permitidos = [rol for rol in roles_admins if rol.idrol in [1, 2]]
-
-        if not roles_permitidos:
-            raise HTTPException(status_code=404, detail="No hay roles permitidos")
-
-        usuarios_admins = self.session.query(usuario).filter(usuario.idrol.in_([1, 2])).all()
-        usuarios_admins = self.session.query(usuario).filter(usuario.role_id.in_([1, 2])).all()
-    
         for usuario in usuarios_admins:
             notificacion_data = {
                 'idsolicitud': nueva_solicitud.idsolicitud,
@@ -35,8 +29,7 @@ class SolicitudService:
                 'create_date': date.today(),
                 'update_date': date.today(),
             }
-
-        self.__notificacionesRepository.create_notificacion(notificacion_data)
+            self.__notificacionesRepository.create_notificacion(notificacion_data)
         return nueva_solicitud
     
     def create_notificacion(self, notificacion_data: NotificacionCreate)->NotificacionOutput:

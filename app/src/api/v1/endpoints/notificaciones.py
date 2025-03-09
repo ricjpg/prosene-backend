@@ -73,24 +73,3 @@ async def mis_notificaciones_admin(session : Session = Depends(get_db), user : U
     except Exception as error:
         # print(error)
         raise HTTPException(status_code=404, detail="No tienes notificaciones")
-'''
-@router.get('/admin/{id}', status_code=200, summary="obtener notificacion por id")
-async def get_notificacion(id:int,session:Session=Depends(get_db), user : UserOutput = Depends(get_current_user))-> NotificacionOutput:
-    try:
-        notificacion = NotificacionesService(session=session).get_notificacion(id)
-        if notificacion:
-            if notificacion.idusuario == user.idusuario:
-                return notificacion
-    except Exception as error:
-        raise HTTPException(status_code=404)
-    
-@router.put('/admin/{id}', status_code=200, summary="marcar notificacion como leida")
-async def mark_as_read(id:int,session:Session=Depends(get_db))->NotificacionOutput:
-    try:
-        notificacion = NotificacionesService(session=session).get_notificacion(id)
-        if notificacion:
-            return NotificacionesService(session=session).mark_as_read(id)
-    except Exception as error:
-        raise HTTPException (status_code=404)
-    raise HTTPException(status_code=404)'
-'''

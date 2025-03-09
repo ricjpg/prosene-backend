@@ -54,11 +54,26 @@ class NotificacionesRepository(BaseRepository):
         if notificaciones:
             return notificaciones
         raise HTTPException(status_code=404, detail="No tienes notificaciones")
-    '''
+   
     def get_all_notificacion_por_admin(self) -> list[NotificacionOutput]:
         notificaciones= self.session.query(Notificaciones).filter(Notificaciones.idusuario== 1).order_by(Notificaciones.update_date).limit(20).all()
         #solicitudes= self.session.query(Solicitudes).filter(Solicitudes.estadosolicitud==1).order_by(Solicitudes.fechacreacion).limit(20)
 
+        if notificaciones:
+            return notificaciones
+        raise HTTPException(status_code=404, detail="No tienes notificaciones")
+    
+    def get_users_by_roles(self, role_ids: list[int]) -> list[User]:
+        usuarios = self.session.query(User).filter(User.role_id.in_(role_ids)).all()
+        
+        if not usuarios:
+            raise HTTPException(status_code=404, detail="No hay usuarios con los roles especificados")
+        
+        return usuarios
+     '''
+    
+    def get_all_notificacion_por_admin(self, idusaurio : int) -> list[NotificacionOutput]:
+        notificaciones= self.session.query(Notificaciones).filter(Notificaciones.idusuario==idusaurio).order_by(Notificaciones.update_date).limit(20).all()
         if notificaciones:
             return notificaciones
         raise HTTPException(status_code=404, detail="No tienes notificaciones")

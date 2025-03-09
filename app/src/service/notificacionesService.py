@@ -38,7 +38,7 @@ class NotificacionesService:
         return {"message": resultado}
     
     def get_my_notificaciones_admin(self, usuario_id:int)-> list[NotificacionOutput]:
-        notificaciones = self.__notificacionesRepository.get_all_notificacion_por_admin()
+        notificaciones = self.__notificacionesRepository.get_all_notificacion_por_admin(usuario_id)
         
         if notificaciones:
             return notificaciones
