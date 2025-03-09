@@ -101,3 +101,15 @@ async def asignar_solicitud(data: AsignarSchema, session: Session = Depends(get_
         return SolicitudService(session=session).asignar_solicitud(data)
     except Exception as error:
         raise error
+
+@router.delete("/eliminar", status_code=200, summary="Eliminar notificacion")
+async def elimnar_notificacion(id:int, session: Session = Depends(get_db), user: UserOutput = Depends(get_current_user))->str:
+    try:
+        solicitud = SolicitudService(session=session).get_solicitud_por_id(id)
+        if not solicitud:
+            raise HTTPException(status_code=404,  detail="No existe la solicitud con id: "+str(id))
+        if solicitud.idusuariosolicitante == user.idusuario:
+            return SolicitudService(session=session).eliminar_solicitud(id)
+        raise HTTPException(status_code=401)
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=str(error))

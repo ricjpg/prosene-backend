@@ -71,3 +71,5 @@ class SolicitudService:
     def asignar_solicitud(self, data: AsignarSchema)->SolicitudesOutput:
         return self.__solicitudRepositoy.asignar_solicitud(data)
     
+    def eliminar_solicitud(self, id:int) -> str:
+        return self.__solicitudRepositoy.eliminar_solicitud(id)

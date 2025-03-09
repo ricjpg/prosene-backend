@@ -86,4 +86,17 @@ class SolicitudRepository(BaseRepository):
             return solicitud
         except Exception as error:
             raise HTTPException(status_code=500, detail=str(error))
+        
+
+    def eliminar_solicitud(self, id:int) ->str:
+        try:
+            solicitud = self.session.query(Solicitudes).filter(Solicitudes.idsolicitud == id).first()
+            if not solicitud:
+                raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+            self.session.delete(solicitud)
+            self.session.commit()
+            return "Solicitud eliminada correctamente"
+        except Exception as error:
+            self.session.rollback()
+            raise HTTPException(status_code=500, detail=str(error))
 
