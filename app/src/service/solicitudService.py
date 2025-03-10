@@ -3,25 +3,34 @@ from datetime import date
 from ..repository.solicitudRepository import SolicitudRepository
 from ..repository.notificacionesRepository import NotificacionesRepository
 from ..schemas.solicitudes import SolicitudesOutput, SolicitudesCreate, SolicitudUpdate, SolicitudEditar, AsignarSchema
+from ..repository.rolesRepository import RolesRepository
+from ..schemas.solicitudes import SolicitudesOutput, SolicitudesCreate, SolicitudUpdate, SolicitudEditar
 from ..schemas.notificaciones import NotificacionCreate, NotificacionOutput
+from ..schemas.user import UserInCreate, UserInLogin, UserWithToken, UserOutput, UserInUpdate
 from fastapi import HTTPException
 
 class SolicitudService:
     def __init__(self, session : Session):
         self.__solicitudRepositoy = SolicitudRepository(session=session)
         self.__notificacionesRepository = NotificacionesRepository(session=session)
-
+        self.__rolesRepository = RolesRepository(session=session)
 
     def create_solicitud(self, solicitud_details: SolicitudesCreate)->SolicitudesOutput:
         nueva_solicitud = self.__solicitudRepositoy.create_solicitud(solicitud_details)
-        # notificacion_data = {
-        #     'idsolicitud' : nueva_solicitud.idsolicitud,
-        #     'idusuario' : nueva_solicitud.idusuariosolicitante,
-        #     'isread' : False,
-        #     'create_date' : date.today(),
-        #     'update_date' : date.today(),
-        # }
-        # noti = self.create_notificacion(notificacion_data)
+        
+        usuarios_admins = self.__rolesRepository.get_users_by_roles([1, 2])
+       # if not usuarios_admins:
+         #   raise HTTPException(status_code=404, detail="No hay usuarios con rol de administrador o superusuario")
+
+        for usuario in usuarios_admins:
+            notificacion_data = {
+                'idsolicitud': nueva_solicitud.idsolicitud,
+                'idusuario': usuario.idusuario, 
+                'isread': False,
+                'create_date': date.today(),
+                'update_date': date.today(),
+            }
+            self.__notificacionesRepository.create_notificacion(notificacion_data)
         return nueva_solicitud
     
     def create_notificacion(self, notificacion_data: NotificacionCreate)->NotificacionOutput:
@@ -51,7 +60,7 @@ class SolicitudService:
         return self.__solicitudRepositoy.get_all_solicitudes()
     
     def get_solicitudes_por_estado(self, estado_id:int)-> list[SolicitudesOutput]:
-        return self.__solicitudRepositoy.get_solicitudes_por_estado(estado_id)
+        return self.__solicitudRepositoy(estado_id)
     
     def get_solicitudes_por_tipo(self, tipo_id:int ) ->list[SolicitudesOutput]:
         solicitudes = self.__solicitudRepositoy.get_solicitudes_por_tipo(tipo_id)
