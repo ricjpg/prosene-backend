@@ -3,6 +3,7 @@ from typing import Union, Optional
 from .role import RolInCreate, RolOutput
 from .centroRegional import CentroRegionalOutput
 from .roles import RolesOutput, RolesCreate
+from .persona import PersonaOutput
 
 
 class UserInCreate(BaseModel):
@@ -25,6 +26,7 @@ class UserOutput(BaseModel):
     correoverificado: Optional[bool] = None
     primeracceso: Optional[bool] = None
     centroregional: Optional[CentroRegionalOutput] = None
+    persona: Optional[PersonaOutput] = None
 
     class Config:
         orm_mode = True

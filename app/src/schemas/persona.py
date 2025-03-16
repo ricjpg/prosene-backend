@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from pydantic import EmailStr, BaseModel
 from typing import Optional, Union
-from .user import UserOutput
+# from .user import UserOutput
 from .condicionMedica import CondicionMedicaOutput
 
 
@@ -31,6 +31,6 @@ class PersonaOutput(BaseModel):
     telefono: str
     fechanacimiento: Optional[date] = None
     sexo: str
-    usuario: Optional[UserOutput] = None
+    # usuario: Optional[UserOutput] = None
     class Config:
         orm_mode = True

@@ -19,7 +19,7 @@ class UserRepository(BaseRepository):
         user = self.session.query(User).filter_by(email=email).first()
         return bool(user)
 
-    def get_user_by_email(self, email : str) -> User:
+    def get_user_by_email(self, email : str) -> UserOutput:
         user = self.session.query(User).filter_by(email=email).first()
         return user
     
