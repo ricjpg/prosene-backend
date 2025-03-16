@@ -3,3 +3,6 @@
 **/__pycache__
 db.sql
 dummy_data.sql
+app/src/.DS_Store
+.DS_Storedb.sql
+dummy_data.sql

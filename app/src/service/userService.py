@@ -70,6 +70,7 @@ class UserService:
         user = self.__userRepository.get_user_by_email(email_input)
         print(user)
         token = AuthHandler.sign_jwt(user_id=user.idusuario, role_id=user.role_id)
+        
         if token:
             print(token)
             return token
@@ -82,7 +83,14 @@ class UserService:
             hashed_password = HashHelper.get_password_hash(plain_password=password)
             user.password = hashed_password
             user = self.__userRepository.reset_password(user_data=user)
-            print(hashed_password)
-
             return user
         return HTTPException(status_code=404, detail="user not found")
+    
+    
+    def get_payload(self, token:str):
+        token_data = AuthHandler.decode_token(token)
+        print(token_data)
+        return token_data
+    
+    def get_admins(self):
+        return self.__userRepository.get_admins()

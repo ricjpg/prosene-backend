@@ -1,7 +1,9 @@
 from .base import BaseRepository
 from ..models.user import User
+from ..models.role import Role
 from ..schemas.user import UserInCreate, UserOutput, UserInUpdate, ResetPassword
 from fastapi import HTTPException
+from sqlalchemy import or_
 
 
 class UserRepository(BaseRepository):
@@ -62,3 +64,9 @@ class UserRepository(BaseRepository):
             self.session.refresh(instance=user)
             return "Se ha cambiado tu contraseña"
         return HTTPException(status_code=404, detail="Usuario no encontrado")
+    
+    def get_admins(self) -> list[UserOutput]:
+        admins = self.session.query(User).filter(or_(User.role_id==1, User.role_id==2))
+        if admins:
+            return admins
+        raise HTTPException(status_code=404, detail="Colaboradores no disponibles")

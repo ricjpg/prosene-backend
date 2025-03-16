@@ -12,7 +12,7 @@ class SolicitudesCreate(BaseModel):
     idresponsablesolicitud: Optional[int] = 1
     idtiposolicitud: int
     idestadosolicitud: Optional[int] = 1
-    fechacreacion: Optional[datetime] = datetime.today
+    fechacreacion: Optional[datetime] = datetime.today()
     descripcion: Optional[str]
     class Config:
         orm_mode = True
@@ -44,3 +44,7 @@ class SolicitudEditar(BaseModel):
     descripcion: Optional[str] = None
     class Config:
         orm_mode = True
+
+class AsignarSchema(BaseModel):
+    idsolicitud: Optional[int]
+    idresponsablesolicitud: Optional[int]

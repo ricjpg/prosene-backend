@@ -62,3 +62,9 @@ class ResetPassword(BaseModel):
 
     class Config:
         orm_mode = True
+
+class PasswordChange(BaseModel):
+    password: str
+
+    class Config:
+        orm_mode = True

@@ -45,10 +45,14 @@ class FormularioService:
         # raise HTTPException(status_code=208, detail="Este formulario ya existe")
     
     def create_movilizacion(self, movilizacion_data: MovilizacionCreate)->MovilizacionOutput:
-        # form = self.__formularioRepository.get_form_by_id(movilizacion_data.idformulario)
-        # if not form:
-            return self.__formularioRepository.create_movilizacion(movilizacion_data)
-        # raise HTTPException(status_code=208, detail="Este formulario ya existe")
+        return self.__formularioRepository.create_movilizacion(movilizacion_data)
+
+    def exit_movilizacion(self, mov_id:int)->bool:
+        return self.__formularioRepository.exist_movilizacion(mov_id)
+
+
+    def get_movilizacion(self, mov_id:int)->MovilizacionOutput:
+        return self.__formularioRepository.get_movilizacion(id=mov_id)
     
     def create_servicios(self, servicios_data: MovilizacionCreate)->MovilizacionOutput:
         # form = self.__formularioRepository.get_form_by_id(servicios_data.idformulario)
@@ -56,8 +60,8 @@ class FormularioService:
             return self.__formularioRepository.create_servicios(servicios_data)
         # raise HTTPException(status_code=208, detail="Este formulario ya existe")
     
-    def get_full_form_by_id(self, form_id: int):
-        full_form = self.__formularioRepository.get_full_form_by_id(form_id)
+    def get_full_form_by_id(self, user_id: int):
+        full_form = self.__formularioRepository.get_full_form_by_id(user_id)
         if full_form:
             return full_form
         raise HTTPException(status_code=404, detail="Not found")
