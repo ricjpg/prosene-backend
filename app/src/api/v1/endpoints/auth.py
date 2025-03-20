@@ -4,6 +4,7 @@ from ....database.database import get_db
 from sqlalchemy.orm import Session
 from ....service.userService import UserService
 from ....utils.protectRoute import get_current_user
+from ....core.security.authHandler import AuthHandler
 
 
 router = APIRouter(tags=["auth"])

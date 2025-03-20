@@ -2,6 +2,7 @@ import jwt
 import os
 import time
 from decouple import config
+from ...schemas.user import UserOutput
 
 JWT_SECRET = config("JWT_SECRET")
 JWT_ALGORITHM = config("JWT_ALGORITHM")
@@ -30,10 +31,10 @@ class AuthHandler(object):
             return None
         
     @staticmethod
-    def decode_token(token:str) -> dict:
+    def decode_token(token:str) -> UserOutput:
         try:
             decoded = jwt.decode(token, options={"verify_signature": False})
-            return decoded
+            return decoded if decoded["expires"] >= time.time() else None
         except:
             print("unable to decode")
             return None

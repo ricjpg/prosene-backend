@@ -50,9 +50,9 @@ class UserInLogin(BaseModel):
 
 class UserWithToken(BaseModel):
     token: str
-    idusuario: Optional[int] = None
-    role_id: Optional[int] = None
-    isActive: Union[bool, None] = True
+    # idusuario: Optional[int] = None
+    # role_id: Optional[int] = None
+    # isActive: Union[bool, None] = True
 
 class UserOutputMinimal(BaseModel):
     email: Optional[EmailStr] = None
