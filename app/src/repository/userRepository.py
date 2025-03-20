@@ -38,7 +38,7 @@ class UserRepository(BaseRepository):
     
     def get_all_users(self) ->list[UserOutput]:
         try:
-            users = self.session.query(User).filter(User.isactive==True).all()
+            users = self.session.query(User).all()
             return users
         except Exception as error:
             raise error

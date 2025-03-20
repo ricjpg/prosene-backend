@@ -22,7 +22,7 @@ class UserOutput(BaseModel):
     idusuario: Optional[int]
     email: Union[EmailStr, None] = None
     role_id: Optional[int] = None
-    isActive: Union[bool, None] = True
+    isactive: Union[bool, None] = True
     correoverificado: Optional[bool] = None
     primeracceso: Optional[bool] = None
     centroregional: Optional[CentroRegionalOutput] = None

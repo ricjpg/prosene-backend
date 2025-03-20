@@ -4,6 +4,7 @@ from ....database.database import get_db
 from sqlalchemy.orm import Session
 from ....service.userService import UserService
 
+
 router = APIRouter(tags=["auth"])
 
 @router.post("/login", status_code=200, response_model=UserWithToken)

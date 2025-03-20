@@ -8,10 +8,7 @@ from ..schemas.user import UserWithToken, UserOutput
 
 AUTH_PREFIX = 'Bearer '
 
-def get_current_user(
-        session : Session = Depends(get_db), 
-        authorization : Annotated[Union[str, None] , Header()] = None 
-) -> UserOutput:
+def get_current_user(session : Session = Depends(get_db), authorization : Annotated[Union[str, None] , Header()] = None ) -> UserOutput:
     auth_exception = HTTPException(
         status_code = status.HTTP_401_UNAUTHORIZED,
         detail = "Invalid Authentication Credentials"

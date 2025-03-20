@@ -28,7 +28,7 @@ class UserService:
         user = self.__userRepository.get_user_by_email(email=login_details.email)
         if HashHelper.verify_password(plain_password=login_details.password, hashed_password=user.password):
             token = AuthHandler.sign_jwt(user_id=user.idusuario, role_id=user.role_id)
-            if token:
+            if token: 
                 return UserWithToken(token=token, idusuario=user.idusuario, role_id=user.role_id, isActive=user.isactive)
             raise HTTPException(status_code=500, detail="Unable to process request")
         raise HTTPException(status_code=400, detail="Please check your Credentials")
