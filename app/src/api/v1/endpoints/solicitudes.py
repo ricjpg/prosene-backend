@@ -113,3 +113,13 @@ async def elimnar_notificacion(id:int, session: Session = Depends(get_db), user:
         raise HTTPException(status_code=401)
     except Exception as error:
         raise HTTPException(status_code=500, detail=str(error))
+    
+@router.get("/atendidas", status_code=200, summary="solicitudes atendidas")
+async def obtener_mis_solicitudes_atendidas(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[SolicitudesOutput]:
+    try:
+        usuario_id = user.idusuario
+        solicitudes = SolicitudService(session=session).get_solicitudes_atendidas(usuario_id)
+        if solicitudes:
+            return solicitudes
+    except Exception as error:
+        print(error)

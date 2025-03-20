@@ -103,3 +103,8 @@ class SolicitudRepository(BaseRepository):
             self.session.rollback()
             raise HTTPException(status_code=500, detail=str(error))
 
+    def get_solicitudes_atendidas(self, user_id:int)->list[SolicitudesOutput]:
+        solicitudes = self.session.query(Solicitudes).filter(Solicitudes.idresponsablesolicitud == user_id).all()
+        if solicitudes:
+            return solicitudes
+        raise HTTPException(status_code=404, detail="No tienes solicitudes asignadas")

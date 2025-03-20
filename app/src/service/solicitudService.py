@@ -82,3 +82,6 @@ class SolicitudService:
     
     def eliminar_solicitud(self, id:int) -> str:
         return self.__solicitudRepositoy.eliminar_solicitud(id)
+    
+    def get_solicitudes_atendidas(self, user_id:int)->list[SolicitudesOutput]:
+        return self.__solicitudRepositoy.get_solicitudes_atendidas(user_id)
