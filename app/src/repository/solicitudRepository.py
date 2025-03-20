@@ -93,9 +93,12 @@ class SolicitudRepository(BaseRepository):
             solicitud = self.session.query(Solicitudes).filter(Solicitudes.idsolicitud == id).first()
             if not solicitud:
                 raise HTTPException(status_code=404, detail="Solicitud no encontrada")
-            self.session.delete(solicitud)
-            self.session.commit()
-            return "Solicitud eliminada correctamente"
+            if solicitud.estadosolicitud.descripcion == "Recibida":
+                print(solicitud.estadosolicitud)
+                self.session.delete(solicitud)
+                self.session.commit()
+                return "Solicitud eliminada correctamente"
+            raise HTTPException(status_code=403, detail="No se puede eliminar una solicitud que no este en estado 'Recibida'")
         except Exception as error:
             self.session.rollback()
             raise HTTPException(status_code=500, detail=str(error))
