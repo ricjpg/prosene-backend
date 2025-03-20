@@ -3,6 +3,7 @@ from ....schemas.user import UserInCreate, UserInLogin, UserWithToken, UserOutpu
 from ....database.database import get_db
 from sqlalchemy.orm import Session
 from ....service.userService import UserService
+from ....utils.protectRoute import get_current_user
 
 
 router = APIRouter(tags=["auth"])
@@ -25,3 +26,7 @@ def signUp(signUpDetails : UserInCreate, session : Session = Depends(get_db)):
     except Exception as error:
         print(error)
         raise error
+    
+@router.get("/me", status_code=200, response_model=UserOutput)
+def me(session: Session = Depends(get_db), user: UserOutput = Depends(get_current_user)):
+    return user

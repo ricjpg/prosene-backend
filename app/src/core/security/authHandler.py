@@ -13,7 +13,7 @@ class AuthHandler(object):
     def sign_jwt(user_id : int, role_id : int) -> str:
         payload = {
             "user_id" : user_id,
-            "expires": time.time() + 12000,
+            "expires": time.time() + 28800,
             "role_id": role_id
         }
 
