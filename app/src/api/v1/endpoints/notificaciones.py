@@ -43,7 +43,7 @@ async def get_notificacion(id:int,session:Session=Depends(get_db), user : UserOu
 
 
 @router.put('/{id}', status_code=200, summary="marcar notificacion como leida")
-async def mark_as_read(id:int,session:Session=Depends(get_db))->NotificacionOutput:
+async def mark_as_read(id:int,session:Session=Depends(get_db), user : UserOutput = Depends(get_current_user))->NotificacionOutput:
     try:
         notificacion = NotificacionesService(session=session).get_notificacion(id)
         if notificacion:

@@ -22,30 +22,30 @@ router = APIRouter(tags=["users"])
 env = Environment(loader=FileSystemLoader("templates"))
 
 @router.post("/create", status_code=201, response_model=UserOutput, summary="Create a new user")
-async def create_user(signUpDetails : UserInCreate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)):
-    if user.role_id == 1 or user.role_id == 2:
+async def create_user(signUpDetails : UserInCreate, session : Session = Depends(get_db)):
+    # if user.role_id == 1 or user.role_id == 2:
         try:
-            reset_url = f"http://localhost:5173/login"
+            url = f"http://localhost:5173/login"
             template_data = {
                 "nombre": signUpDetails.email,
-                "reset_url": reset_url
+                "url": url
             }
             response = welcome_mail(
                 to_email=signUpDetails.email,
                 subject="Bienvenido",
                 template_name="welcome_page.html",
                 template_data=template_data,
-                url_reset = reset_url
+                url = url
             )
             return UserService(session=session).signup(user_details=signUpDetails), response
         except Exception as error:
             print(error)
             raise error
-    raise HTTPException(status_code=403, detail="Unauthorized, please contact the admin")
+    # raise HTTPException(status_code=403, detail="Unauthorized, please contact the admin")
     
 
 @router.get("/all", response_model=list[UserOutput], summary="Get all users")
-async def get_all_users(session : Session = Depends(get_db))->list[UserOutput]:
+async def get_all_users(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user))->list[UserOutput]:
         print(os.getenv('DB_SERVER'))
     # if user.role_id == 1 or user.role_id == 2:
         try:
@@ -56,7 +56,7 @@ async def get_all_users(session : Session = Depends(get_db))->list[UserOutput]:
     # raise HTTPException(status_code=403, detail="Unauthorized, please contact the admin")
 
 @router.get("/get/{user_id}", status_code=200, response_model=UserOutput, summary="Get user by id")
-async def get_user_by_id(user_id : int, session : Session = Depends(get_db)):
+async def get_user_by_id(user_id : int, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)):
     # if user.role_id == 1 or user.role_id == 2:
         try:
             return UserService(session=session).get_user_by_id(user_id=user_id)
@@ -97,33 +97,12 @@ async def update_user(email : str, user_data : UserInUpdate, session : Session =
 
 
 @router.post("/detalles_personales", status_code=200, summary="Detalles personales del usuario")
-async def add_details(persona_input : PersonaCreate, session : Session = Depends(get_db)) -> PersonaOutput:
+async def add_details(persona_input : PersonaCreate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> PersonaOutput:
     try:
         return PersonaService(session=session).create_persona(persona_details=persona_input)
     except Exception as error:
         print(error)
         raise error
-
-# @router.get("/formulario/{id}", status_code=200, summary="Obtener formulario completo")
-# async def get_full_form(id : int, session : Session = Depends(get_db)):
-#     try:
-#         return FormularioService(session=session).get_form_by_user_id(user_id=id)
-#     except Exception as error:
-#         print(error)
-#         raise error
-
-# Legacy
-# @router.post("/resetpassword/{email_input}", status_code=200, summary="reset password")
-# async def reset_password(email_input:str, data:ResetPassword, session : Session = Depends(get_db)):
-#     data.email = email_input
-#     user = UserService(session=session).get_user_by_email(data.email)
-#     if user:
-#         try:
-#             return UserService(session=session).reset_password(email=data.email, password=data.password)
-#         except Exception as error:
-#             print(error)
-#             raise error
-#     return HTTPException(status_code=404, detail="usuario no encontrado")
 
 @router.post("/requestreset", status_code=200, summary="request password reset")
 async def reset_password(mail_data : EmailSchema, session : Session=Depends(get_db)):
@@ -181,7 +160,7 @@ async def mis_notificaciones(session : Session = Depends(get_db), user : UserOut
         raise error
     
 @router.get("/admins", status_code=200, summary="Listar los colaboradores")
-async def get_admins(session: Session = Depends(get_db)) -> list[UserOutput]:
+async def get_admins(session: Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[UserOutput]:
     try:
         admins = UserService(session=session).get_admins()
         if admins:

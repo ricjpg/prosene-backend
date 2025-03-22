@@ -70,7 +70,7 @@ async def get_all(session : Session = Depends(get_db), user : UserOutput = Depen
     
     
 @router.get("/tipo/{id}", status_code=200, summary="solicitudes por tipo")
-async def obtener_por_tipo(id:int, session : Session = Depends(get_db)) -> list[SolicitudesOutput]:
+async def obtener_por_tipo(id:int, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[SolicitudesOutput]:
     try:
         return SolicitudService(session=session).get_solicitudes_por_tipo(tipo_id=id)
     except Exception as error:
@@ -79,7 +79,7 @@ async def obtener_por_tipo(id:int, session : Session = Depends(get_db)) -> list[
     
     
 @router.get("/estado/{estado_id}", status_code=200, summary="solicitudes po estado")
-async def obtener_por_estado(estado_id:int, session : Session = Depends(get_db)) -> list[SolicitudesOutput]:
+async def obtener_por_estado(estado_id:int, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[SolicitudesOutput]:
     try:
         return SolicitudService(session=session).get_solicitudes_por_estado(estado_id)
     except Exception as error:
@@ -88,7 +88,7 @@ async def obtener_por_estado(estado_id:int, session : Session = Depends(get_db))
     
     
 @router.put("/editar", status_code=200, summary="solicitudes po estado")
-async def obtener_por_estado(solicitudUpdate:SolicitudEditar, session : Session = Depends(get_db)) -> SolicitudesOutput:
+async def obtener_por_estado(solicitudUpdate:SolicitudEditar, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
     try:
         return SolicitudService(session=session).editar_solicitud(solicitudUpdate)
     except Exception as error:
@@ -96,7 +96,7 @@ async def obtener_por_estado(solicitudUpdate:SolicitudEditar, session : Session 
         raise error
     
 @router.put("/asignar", status_code=200, summary="Asignar solicitud a un colaborador")
-async def asignar_solicitud(data: AsignarSchema, session: Session = Depends(get_db))-> SolicitudesOutput:
+async def asignar_solicitud(data: AsignarSchema, session: Session = Depends(get_db), user : UserOutput = Depends(get_current_user))-> SolicitudesOutput:
     try:
         return SolicitudService(session=session).asignar_solicitud(data)
     except Exception as error:

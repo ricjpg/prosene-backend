@@ -33,7 +33,7 @@ def send_email(to_email: str, subject: str, template_name: str, template_data: d
         print(f"Error sending email: {error}")
         return {"error": "An error occurred while sending the email"}
 
-def welcome_mail(to_email: str, subject: str, template_name: str, template_data: dict, url_reset : str):
+def welcome_mail(to_email: str, subject: str, template_name: str, template_data: dict, url : str):
 
     try:
         email_address = os.getenv('email_address')
@@ -41,7 +41,7 @@ def welcome_mail(to_email: str, subject: str, template_name: str, template_data:
 
         # Cargar la plantilla y renderizarla con datos dinámicos
         template = env.get_template("welcome_page.html")
-        email_content = template.render(nombre = to_email, reset_url = url_reset)
+        email_content = template.render(nombre = to_email, url = url)
 
         # Crear el correo
         msg = EmailMessage()
