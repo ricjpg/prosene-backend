@@ -5,7 +5,7 @@ from ....database.database import get_db
 from sqlalchemy.orm import Session
 from ....utils.protectRoute import get_current_user
 from ....service.solicitudService import SolicitudService
-from ....schemas.solicitudes import SolicitudesCreate, SolicitudesOutput, SolicitudUpdate, SolicitudEditar, AsignarSchema
+from ....schemas.solicitudes import SolicitudesCreate, SolicitudesOutput, AtenderSolicitud, SolicitudEditar, AsignarColaborador, AsignarBecario, AtenderSolicitud, SolicitudUpdate
 from ....schemas.notificaciones import NotificacionCreate, NotificacionOutput
 from ....service.solicitudService import SolicitudesCreate
 
@@ -22,7 +22,33 @@ async def create_solicitud(solicitud_input : SolicitudesCreate, session : Sessio
         print(error)
         raise error
 
-@router.put("/atender", status_code=200, summary="cambio de estado")
+@router.put("/asignar_colaborador", status_code=200, summary="Asignar solicitud a un colaborador")
+async def asignar_solicitud(data: AsignarColaborador, session: Session = Depends(get_db), user : UserOutput = Depends(get_current_user))-> SolicitudesOutput:
+    try:
+        if user.role_id == 1:
+            return SolicitudService(session=session).asignar_a_colaborador(data)
+        raise HTTPException(status_code=401)
+    except Exception as error:
+        raise error
+
+@router.put("/asignar_becario", status_code=200, summary="Asignar solicitud a un becario")
+async def asignar_solicitud(data: AsignarBecario, session: Session = Depends(get_db), user : UserOutput = Depends(get_current_user))-> SolicitudesOutput:
+    try:
+        data.idresponsablesolicitud = user.idusuario
+        return SolicitudService(session=session).asignar_a_becario(data)
+    except Exception as error:
+        raise error
+
+@router.put("/atender_solicitud", status_code=200, summary="atender la solicitud (con mi id)")
+async def atender_solicitud(nueva_data : AtenderSolicitud, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
+    try:
+        nueva_data.idresponsablesolicitud = user.idusuario
+        return SolicitudService(session=session).atender_solicitud(nueva_data)
+    except Exception as error:
+        print(error)
+        raise error
+
+@router.put("/cambiar_estado", status_code=200, summary="cambiar estado de la solicitud")
 async def actualizar_estado(nueva_data : SolicitudUpdate, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
     try:
         nueva_data.idresponsablesolicitud = user.idusuario
@@ -30,7 +56,7 @@ async def actualizar_estado(nueva_data : SolicitudUpdate, session : Session = De
     except Exception as error:
         print(error)
         raise error
-    
+
 
 @router.get("/", status_code=200, summary="mis solicitudes")
 async def obtener_mis_solicitudes(session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[SolicitudesOutput]:
@@ -78,7 +104,7 @@ async def obtener_por_tipo(id:int, session : Session = Depends(get_db), user : U
         raise error
     
     
-@router.get("/estado/{estado_id}", status_code=200, summary="solicitudes po estado")
+@router.get("/estado/{estado_id}", status_code=200, summary="solicitudes por estado")
 async def obtener_por_estado(estado_id:int, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> list[SolicitudesOutput]:
     try:
         return SolicitudService(session=session).get_solicitudes_por_estado(estado_id)
@@ -87,20 +113,14 @@ async def obtener_por_estado(estado_id:int, session : Session = Depends(get_db),
         raise error
     
     
-@router.put("/editar", status_code=200, summary="solicitudes po estado")
-async def obtener_por_estado(solicitudUpdate:SolicitudEditar, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
+@router.put("/editar", status_code=200, summary="editar solicitud, solo para estudiantes")
+async def editar_solicitud(solicitudUpdate:SolicitudEditar, session : Session = Depends(get_db), user : UserOutput = Depends(get_current_user)) -> SolicitudesOutput:
     try:
         return SolicitudService(session=session).editar_solicitud(solicitudUpdate)
     except Exception as error:
         print(error)
         raise error
     
-@router.put("/asignar", status_code=200, summary="Asignar solicitud a un colaborador")
-async def asignar_solicitud(data: AsignarSchema, session: Session = Depends(get_db), user : UserOutput = Depends(get_current_user))-> SolicitudesOutput:
-    try:
-        return SolicitudService(session=session).asignar_solicitud(data)
-    except Exception as error:
-        raise error
 
 @router.delete("/eliminar", status_code=200, summary="Eliminar notificacion")
 async def elimnar_notificacion(id:int, session: Session = Depends(get_db), user: UserOutput = Depends(get_current_user))->str:

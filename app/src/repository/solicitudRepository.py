@@ -1,7 +1,7 @@
 from .base import BaseRepository
 from fastapi import HTTPException
 from ..models.solicitudes import Solicitudes
-from ..schemas.solicitudes import SolicitudesCreate, SolicitudesOutput, SolicitudUpdate, SolicitudEditar, AsignarSchema
+from ..schemas.solicitudes import SolicitudesCreate, SolicitudesOutput, AtenderSolicitud, SolicitudEditar, AsignarColaborador, CambioEstadoRetroalimentacion, AsignarBecario, SolicitudUpdate
 from ..schemas.estadoSolicitud import EstadoSolicitudOutput
 from ..models.tipoSolicitud import TipoSolicitud
 from ..models.estadoSolicitud import EstadoSolicitud
@@ -17,11 +17,33 @@ class SolicitudRepository(BaseRepository):
         self.session.refresh(instance=newSolicitud)
         return newSolicitud
     
-    def solicitud_cambio_estado(self, nueva_data:SolicitudUpdate) -> SolicitudesOutput:
+    def solicitud_cambio_estado(self, nueva_data: SolicitudUpdate) -> SolicitudesOutput:
         solicitud = self.session.query(Solicitudes).filter(Solicitudes.idsolicitud == nueva_data.idsolicitud).first()
         if solicitud:
             solicitud.idestadosolicitud = nueva_data.idestadosolicitud
             solicitud.idresponsablesolicitud = nueva_data.idresponsablesolicitud
+            if solicitud.idestadosolicitud == 1:
+                solicitud.retroalimentacionRecibida = nueva_data.retroalimentacionRecibida
+            if solicitud.idestadosolicitud == 2:
+                solicitud.retroalimentacionEnProceso = nueva_data.retroalimentacionEnProceso
+            if solicitud.idestadosolicitud == 3:
+                solicitud.retroalimentacionFinalizada = nueva_data.retroalimentacionFinalizada
+            if solicitud.idestadosolicitud == 4:
+                solicitud.retroalimentacionCancelada = nueva_data.retroalimentacionCancelada
+            if solicitud.idestadosolicitud == 5:
+                solicitud.retroalimentacionRechazada = nueva_data.retroalimentacionRechazada
+            self.session.commit()
+            self.session.refresh(instance=solicitud)
+            return solicitud
+        raise HTTPException(status_code=404, detail="No se encontro la solicitud")
+    
+    def atender_solicitud(self, nueva_data: AtenderSolicitud) -> SolicitudesOutput:
+        solicitud = self.session.query(Solicitudes).filter(Solicitudes.idsolicitud == nueva_data.idsolicitud).first()
+        if solicitud:
+            solicitud.idestadosolicitud = nueva_data.idestadosolicitud
+            solicitud.idresponsablesolicitud = nueva_data.idresponsablesolicitud
+            solicitud.retroalimentacionRecibida = "Recibida"
+            solicitud.retroalimentacionEnProceso = nueva_data.retroalimentacionEnProceso
             self.session.commit()
             self.session.refresh(instance=solicitud)
             return solicitud
@@ -72,7 +94,25 @@ class SolicitudRepository(BaseRepository):
         raise HTTPException(status_code=404, detail="No se encontro la solicitud")
                 
                 
-    def asignar_solicitud(self, data: AsignarSchema) ->SolicitudesOutput:
+    def asignar_a_colaborador(self, data: AsignarColaborador) ->SolicitudesOutput:
+        try:
+            solicitud = self.session.query(Solicitudes).filter(Solicitudes.idsolicitud == data.idsolicitud).first()
+            usuario = self.session.query(User).filter(User.idusuario == data.idresponsablesolicitud).first()
+            if not solicitud:
+                raise HTTPException(status_code=404, detail="Solicitud no encontrada")
+            if not usuario:
+                raise HTTPException(status_code=404, detail="Usuario no encontrado")
+            solicitud.retroalimentacionEnProceso = data.retroalimentacionEnProceso
+            solicitud.retroalimentacionRecibida = "Recibida"
+            solicitud.idresponsablesolicitud = usuario.idusuario
+            solicitud.idestadosolicitud = 2
+            self.session.commit()
+            self.session.refresh(solicitud)
+            return solicitud
+        except Exception as error:
+            raise HTTPException(status_code=500, detail=str(error))
+        
+    def asignar_a_becario(self, data: AsignarBecario) ->SolicitudesOutput:
         try:
             solicitud = self.session.query(Solicitudes).filter(Solicitudes.idsolicitud == data.idsolicitud).first()
             usuario = self.session.query(User).filter(User.idusuario == data.idresponsablesolicitud).first()
@@ -81,6 +121,12 @@ class SolicitudRepository(BaseRepository):
             if not usuario:
                 raise HTTPException(status_code=404, detail="Usuario no encontrado")
             solicitud.idresponsablesolicitud = usuario.idusuario
+            solicitud.toBecario = True
+            solicitud.nombreBecario = data.nombreBecario
+            solicitud.retroalimentacionRecibida = "Recibida"
+            solicitud.retroalimentacionEnProceso = data.retroalimentacionEnProceso
+            solicitud.idestadosolicitud = 2
+            
             self.session.commit()
             self.session.refresh(solicitud)
             return solicitud
@@ -108,3 +154,16 @@ class SolicitudRepository(BaseRepository):
         if solicitudes:
             return solicitudes
         raise HTTPException(status_code=404, detail="No tienes solicitudes asignadas")
+    
+    def cambio_estado_retro(self, id:int, solicitud_data: CambioEstadoRetroalimentacion)->SolicitudesOutput:
+        solicitudUpdate = self.session.query(Solicitudes).filter(Solicitudes.idsolicitud== id).first()
+        if solicitudUpdate:
+            solicitudUpdate.idestadosolicitud = solicitud_data.idestadosolicitud
+            solicitudUpdate.retroalimentacionEnProceso = solicitud_data.retroalimentacionEnProceso
+            solicitudUpdate.retroalimentacionFinalizada = solicitud_data.retroalimentacionFinalizada
+            solicitudUpdate.retroalimentacionCancelada = solicitud_data.retroalimentacionCancelada
+            solicitudUpdate.retroalimentacionRechazada = solicitud_data.retroalimentacionRechazada
+            self.session.commit()
+            self.session.refresh(instance=solicitudUpdate)
+            return solicitudUpdate
+        raise HTTPException(status_code=404, detail="No se encontro la solicitud")

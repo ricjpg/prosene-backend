@@ -1,8 +1,15 @@
-DB_USER='usuario de la db'
-DB_PASSWORD='password de la db'
-DB_HOST='host de la db, usualmente localhost'
-DB_PORT='puerto de la db, usualmente 5432'
-DB_SERVER='nombre de la db'
+DB_USER=''
+DB_PASSWORD=''
+DB_HOST=''
+DB_PORT=''
+DB_SERVER=''
+
+
+DB_USER_LOCAL=''
+DB_PASSWORD_LOCAL=''
+DB_HOST_LOCAL=''
+DB_PORT_LOCAL=''
+DB_SERVER_LOCAL=''
 
 #JWT SETTINGS
 JWT_SECRET='secret key'

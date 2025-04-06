@@ -7,7 +7,12 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_SERVER')}?client_encoding=utf8"
+# LOCAL CONECTION
+SQLALCHEMY_DATABASE_URL = f"postgresql://{os.getenv('DB_USER_LOCAL')}:{os.getenv('DB_PASSWORD_LOCAL')}@localhost:{os.getenv('DB_PORT_LOCAL')}/{os.getenv('DB_SERVER_LOCAL')}"
+
+
+# REMOTE CONECTION
+# SQLALCHEMY_DATABASE_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_SERVER')}?client_encoding=utf8"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

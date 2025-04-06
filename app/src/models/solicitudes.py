@@ -1,6 +1,6 @@
 import datetime
 from ..database.database import Base
-from sqlalchemy import Column, Integer, String, ForeignKey, Date
+from sqlalchemy import Column, Integer, String, ForeignKey, Date, Boolean, TIMESTAMP
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from .tipoSolicitud import TipoSolicitud
 from .estadoSolicitud import EstadoSolicitud
@@ -9,8 +9,15 @@ from .user import User
 class Solicitudes(Base):
     __tablename__ = "solicitudes"
     idsolicitud = Column(Integer, primary_key = True)
-    fechacreacion = Column(Date)
+    fechacreacion = Column(TIMESTAMP, default=datetime.datetime.now(), nullable=False)
     descripcion = Column(String(250))
+    toBecario = Column(Boolean)
+    nombreBecario = Column(String(150))
+    retroalimentacionEnProceso = Column(String(250))
+    retroalimentacionRecibida = Column(String(250))
+    retroalimentacionCancelada = Column(String(250))
+    retroalimentacionFinalizada = Column(String(250))
+    retroalimentacionRechazada = Column(String(250))
     
     idusuariosolicitante = Column(Integer, ForeignKey('usuario.idusuario'))
     idresponsablesolicitud = Column(Integer, ForeignKey('usuario.idusuario'))
