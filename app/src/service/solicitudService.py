@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from datetime import date
 from ..repository.solicitudRepository import SolicitudRepository
 from ..repository.notificacionesRepository import NotificacionesRepository
-from ..schemas.solicitudes import SolicitudesOutput, SolicitudesCreate, SolicitudUpdate, SolicitudEditar, AsignarSchema
+from ..schemas.solicitudes import SolicitudesOutput, SolicitudesCreate, AtenderSolicitud, SolicitudEditar, AsignarColaborador, CambioEstadoRetroalimentacion, AsignarBecario
 from ..repository.rolesRepository import RolesRepository
 from ..schemas.solicitudes import SolicitudesOutput, SolicitudesCreate, SolicitudUpdate, SolicitudEditar
 from ..schemas.notificaciones import NotificacionCreate, NotificacionOutput
@@ -17,11 +17,7 @@ class SolicitudService:
 
     def create_solicitud(self, solicitud_details: SolicitudesCreate)->SolicitudesOutput:
         nueva_solicitud = self.__solicitudRepositoy.create_solicitud(solicitud_details)
-        
         usuarios_admins = self.__rolesRepository.get_users_by_roles([1, 2])
-       # if not usuarios_admins:
-         #   raise HTTPException(status_code=404, detail="No hay usuarios con rol de administrador o superusuario")
-
         for usuario in usuarios_admins:
             notificacion_data = {
                 'idsolicitud': nueva_solicitud.idsolicitud,
@@ -50,6 +46,19 @@ class SolicitudService:
         self.__notificacionesRepository.create_notificacion(data_notificacion)
         return self.__solicitudRepositoy.solicitud_cambio_estado(nueva_data)
     
+    def atender_solicitud(self, nueva_data: AtenderSolicitud)->SolicitudesOutput:
+        solicitud = self.__solicitudRepositoy.get_solicitud_by_id(nueva_data.idsolicitud)
+        print(solicitud.idusuariosolicitante)
+        data_notificacion = {
+                'idsolicitud': nueva_data.idsolicitud,
+                'isread': False,
+                'idusuario': solicitud.idusuariosolicitante,
+                'create_date': date.today(),
+                'update_date': date.today()
+        }
+        self.__notificacionesRepository.create_notificacion(data_notificacion)
+        return self.__solicitudRepositoy.atender_solicitud(nueva_data)
+
     def obtener_mis_solicitudes(self, usuario_id:int)-> list[SolicitudesOutput]:
         solicitudes = self.__solicitudRepositoy.obtener_mis_solicitudes(usuario_id)
         if solicitudes:
@@ -69,19 +78,22 @@ class SolicitudService:
         raise HTTPException(status_code=404, detail="no se encontraron solicitudes de este tipo")
     
     def editar_solicitud(self, solicitudUpdate:SolicitudEditar)->SolicitudesOutput:
-        # solicitud = self.__solicitudRepositoy.get_solicitud_by_id(solicitudUpdate.idsolicitud)
-        # if solicitud:
-            return self.__solicitudRepositoy.editar_solicitud(solicitudUpdate)
-        # return HTTPException(status_code=404, detail="No se encontro la solicitud")
+        return self.__solicitudRepositoy.editar_solicitud(solicitudUpdate)
 
     def get_solicitud_por_id(self, solicitud_id: int)->SolicitudesOutput:
         return self.__solicitudRepositoy.get_solicitud_by_id(solicitud_id)
     
-    def asignar_solicitud(self, data: AsignarSchema)->SolicitudesOutput:
-        return self.__solicitudRepositoy.asignar_solicitud(data)
+    def asignar_a_colaborador(self, data: AsignarColaborador)->SolicitudesOutput:
+        return self.__solicitudRepositoy.asignar_a_colaborador(data)
+    
+    def asignar_a_becario(self, data: AsignarBecario)->SolicitudesOutput:
+        return self.__solicitudRepositoy.asignar_a_becario(data)
     
     def eliminar_solicitud(self, id:int) -> str:
         return self.__solicitudRepositoy.eliminar_solicitud(id)
     
     def get_solicitudes_atendidas(self, user_id:int)->list[SolicitudesOutput]:
         return self.__solicitudRepositoy.get_solicitudes_atendidas(user_id)
+    
+    def cambio_estado_retro(self, id:int, data:CambioEstadoRetroalimentacion) -> SolicitudesOutput:
+        return self.__solicitudRepositoy.cambio_estado_retro(id, data)

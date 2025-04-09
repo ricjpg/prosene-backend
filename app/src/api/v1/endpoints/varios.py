@@ -69,14 +69,12 @@ async def get_all(session : Session = Depends(get_db), user : UserOutput = Depen
     except Exception as error:
         print(error)
         raise error
-
     
 @router.get("/validate-token")
-async def validate_token(token:str):
+async def validate_token(token:str) -> bool:
     try:
         decoded = jwt.decode(token, options={"verify_signature": False})
-        return {"message": "Token válido"} if decoded["expires"] >= time.time() else HTTPException(status_code=401, detail="Token expirado")
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expirado")
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="Token inválido")
+        if decoded["expires"] >= time.time():
+            return True
+    except Exception as error:
+        raise error

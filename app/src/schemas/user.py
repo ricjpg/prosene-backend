@@ -10,7 +10,7 @@ class UserInCreate(BaseModel):
     email: EmailStr
     password: str
     role_id: Optional[int] = 3
-    isactive: Union[bool, None] = True
+    isactive: Union[bool, None] = False
     idcentroregional: Optional[int] = 1
     correoverificado: Optional[bool] = False
     primeracceso: Optional[bool] = True

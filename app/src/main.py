@@ -5,6 +5,7 @@ from .api.v1.routers import router
 from .utils.protectRoute import get_current_user
 from .schemas.user import UserOutput
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -13,6 +14,7 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(lifespan=lifespan)
+# app.mount("/static", StaticFiles(directory="static"), name="static")
 origins = [
     "http://localhost:3000",  # React/Vite corriendo en este puerto
     "http://localhost:5173",  # Vite por defecto
