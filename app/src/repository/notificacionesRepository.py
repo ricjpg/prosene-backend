@@ -4,6 +4,7 @@ from ..schemas.notificaciones import NotificacionCreate, NotificacionOutput
 from .solicitudRepository import SolicitudRepository
 from ..models.solicitudes import Solicitudes
 from fastapi import HTTPException
+from sqlalchemy import desc, asc
 
 
 class NotificacionesRepository(BaseRepository):
@@ -16,7 +17,7 @@ class NotificacionesRepository(BaseRepository):
         return newNotificacion
 
     def get_all_notficiacion_por_usuario(self, idusaurio : int) -> list[NotificacionOutput]:
-        notificaciones= self.session.query(Notificaciones).filter(Notificaciones.idusuario==idusaurio).order_by(Notificaciones.update_date).limit(20).all()
+        notificaciones= self.session.query(Notificaciones).filter(Notificaciones.idusuario==idusaurio).order_by(desc(Notificaciones.update_date)).limit(20).all()
         if notificaciones:
             return notificaciones
         raise HTTPException(status_code=404, detail="No tienes notificaciones")

@@ -84,9 +84,29 @@ class SolicitudService:
         return self.__solicitudRepositoy.get_solicitud_by_id(solicitud_id)
     
     def asignar_a_colaborador(self, data: AsignarColaborador)->SolicitudesOutput:
+        solicitud = self.__solicitudRepositoy.get_solicitud_by_id(data.idsolicitud)
+        print(solicitud.idusuariosolicitante)
+        data_notificacion = {
+                'idsolicitud': data.idsolicitud,
+                'isread': False,
+                'idusuario': solicitud.idusuariosolicitante,
+                'create_date': date.today(),
+                'update_date': date.today()
+        }
+        self.__notificacionesRepository.create_notificacion(data_notificacion)
         return self.__solicitudRepositoy.asignar_a_colaborador(data)
     
     def asignar_a_becario(self, data: AsignarBecario)->SolicitudesOutput:
+        solicitud = self.__solicitudRepositoy.get_solicitud_by_id(data.idsolicitud)
+        print(solicitud.idusuariosolicitante)
+        data_notificacion = {
+                'idsolicitud': data.idsolicitud,
+                'isread': False,
+                'idusuario': solicitud.idusuariosolicitante,
+                'create_date': date.today(),
+                'update_date': date.today()
+        }
+        self.__notificacionesRepository.create_notificacion(data_notificacion)
         return self.__solicitudRepositoy.asignar_a_becario(data)
     
     def eliminar_solicitud(self, id:int) -> str:
