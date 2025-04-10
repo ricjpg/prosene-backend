@@ -12,7 +12,7 @@ SQLALCHEMY_DATABASE_URL = f"postgresql://{os.getenv('DB_USER_LOCAL')}:{os.getenv
 
 
 # REMOTE CONECTION
-# SQLALCHEMY_DATABASE_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_SERVER')}?client_encoding=utf8"
+#SQLALCHEMY_DATABASE_URL = f"postgresql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_SERVER')}?client_encoding=utf8"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
