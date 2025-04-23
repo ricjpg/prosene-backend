@@ -111,7 +111,7 @@ async def reset_password(mail_data : EmailSchema, session : Session=Depends(get_
         persona = PersonaService(session=session).get_by_user_id(user.idusuario)
         user_token =  UserService(session=session).generete_token(mail_data.emailAddress)
 
-        reset_url = f"https://prosene-web-app.vercel.app/usuario/cambiopass/{user_token}"
+        reset_url = f"https://prosene-web-app.vercel.app/usuario/cambiopass/?jwt={user_token}"
         
         template_data = {
             "nombre": mail_data.emailAddress,
