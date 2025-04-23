@@ -70,3 +70,12 @@ class UserRepository(BaseRepository):
         if admins:
             return admins
         raise HTTPException(status_code=404, detail="Colaboradores no disponibles")
+    
+    def activateUser(self, email : str) -> str:
+        user = self.get_user_by_email(email)
+        if user:
+            user.isactive = True
+            self.session.commit()
+            self.session.refresh(instance=user)
+            return "Usuario activado"
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")

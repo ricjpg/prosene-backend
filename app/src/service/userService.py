@@ -94,3 +94,9 @@ class UserService:
     
     def get_admins(self):
         return self.__userRepository.get_admins()
+    
+    def activateUser(self, email:str) -> str:
+        user = self.__userRepository.activateUser(email=email)
+        if user:
+            return user
+        raise HTTPException(status_code=404, detail="User not found")

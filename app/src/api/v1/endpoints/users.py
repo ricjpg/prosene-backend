@@ -167,3 +167,11 @@ async def get_admins(session: Session = Depends(get_db), user : UserOutput = Dep
             return admins
     except Exception as error:
         raise HTTPException(status_code=404)
+    
+@router.post("/activate", status_code=200, summary="Activar cuenta")
+async def activate_account(email: str, session: Session = Depends(get_db), user : UserOutput = Depends(get_current_user)):
+    try:
+        return UserService(session=session).activateUser(email=email)
+    except Exception as error:
+        print(error)
+        raise error
